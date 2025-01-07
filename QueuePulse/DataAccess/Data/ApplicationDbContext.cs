@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QueuePulse.FluentAPIConfig;
 using QueuePulse.Models;
-namespace QueuePulse.Data
+namespace QueuePulse.DataAccess.Data
 {
     public class ApplicationDbContext : DbContext
     {

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using QueuePulse.Data;
+using QueuePulse.DataAccess.Data;
 using QueuePulse.Models;
 using System.Diagnostics;
 

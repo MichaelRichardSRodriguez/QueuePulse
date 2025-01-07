@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using QueuePulse.Data;
+using QueuePulse.DataAccess.Data;
+using QueuePulse.DataAccess.Repositories.ConcreteRepo;
+using QueuePulse.DataAccess.Repositories.RepoInterfaces;
+using QueuePulse.DataAccess.Services.ConcreteServ;
+using QueuePulse.DataAccess.Services.ServInterfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +12,8 @@ builder.Services.AddControllersWithViews();
 
 //Add Dbcontext
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("QueuePulseConnection")));
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+builder.Services.AddScoped<IDepartmentService,DepartmentService>();
 
 var app = builder.Build();
 
