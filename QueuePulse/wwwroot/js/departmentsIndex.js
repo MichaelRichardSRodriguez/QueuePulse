@@ -57,22 +57,48 @@
     }
 
     function updateDepartmentStatus(itemId) {
-        fetch('/department/UpdateStatus/' + itemId, {
-            method: 'GET', // or 'POST' depending on your API requirement
+        fetch(`/department/UpdateStatus/${itemId}`, {
+            method: 'GET', // or 'POST' depending on your API requirement // Use POST since you're updating data
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json', // Indicate the request body is JSON
+
                 // Add any other headers if necessary (e.g., authorization tokens)
             },
         })
-            .then(response => response.json())  // Assuming the response is JSON
+            //.then(response => response.json())  // Assuming the response is JSON
+            //.then(data => {
+            //    //console.log('Success:', data);
+
+            //    toastr.success('Department status updated successfully.');
+
+            //    // Optionally, you can update the UI with the returned data or show a success message
+            //    loadDepartments();
+            //})
+            //.catch(error => {
+            //    //console.error('Error:', error);
+            //    // Handle any errors here
+
+            //    toastr.error('An error occured while updating the department status: ' + error);
+            //});
+
+
+            .then(response => { 
+                if (!response.ok) {
+                    throw new Error('Server responded with an error: ' + response.statusText);
+                }
+                return response.json(); // Assuming the response is JSON
+            })  
             .then(data => {
-                console.log('Success:', data);
-                // Optionally, you can update the UI with the returned data or show a success message
-                loadDepartments();
+                if (data.success) {
+                    toastr.success('Department status updated successfully.');
+                } else {
+                    toastr.error(data.message || 'Failed to update department status.');
+                }
+
+                loadDepartments(); // Reload the department list or update the UI accordingly
             })
             .catch(error => {
-                console.error('Error:', error);
-                // Handle any errors here
+                toastr.error('An error occurred while updating the department status: ' + error.message);
             });
     }
 
@@ -136,16 +162,16 @@
                 });
             });
 
+            const isActive = item.status === "Active";
 
             // Actions column
             const actionsCell = document.createElement("td");
             actionsCell.innerHTML = `
-
-                <a class="btn btn-warning btn-sm w-25" href="/department/Edit/${item.id}">Edit</a>
+                <a class="btn btn-warning btn-sm w-25 ${isActive ? '' : 'disabled'}" href="/department/Edit/${item.id}">Edit</a>
                 <a class="btn btn-primary btn-sm w-25" href="/department/Details/${item.id}">Details</a>
-                <a class="btn btn-danger btn-sm w-25" href="/department/Delete/${item.id}">Delete</a>
-
+                <a class="btn btn-danger btn-sm w-25" href="/department/Delete/${ item.id }">Delete</a>
             `;
+
             row.appendChild(actionsCell);
 
             // Append row to table body

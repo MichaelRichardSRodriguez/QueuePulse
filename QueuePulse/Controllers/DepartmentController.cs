@@ -227,13 +227,11 @@ namespace QueuePulse.Controllers
 
                 await _service.UpdateDepartmentAsync(department);
 
-                TempData["success"] = "Department status updated successfully.";
+                //TempData["success"] = "Department status updated successfully.";
 
-                //return Json(new { success = true, message = "Department status updated successfully." });
-                return Json(department);
+                return Json(new { success = true, message = "Department status updated successfully." });
+                //return Json(department);
 
-                // Return JSON response with redirect information
-                //return Json(new { success = true, redirectTo = Url.Action(nameof(GetDepartments), new { searchQuery = searchQuery, statusFilter = statusFilter }) });
             }
 
             return Json(new { success = false, message = "Department not found." });
