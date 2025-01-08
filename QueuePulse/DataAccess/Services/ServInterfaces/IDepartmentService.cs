@@ -10,10 +10,9 @@ namespace QueuePulse.DataAccess.Services.ServInterfaces
         Task<bool> isExistingDepartmentName(int id, string name);
         Task<bool> isExistingDepartmentId(int id);
         Task CreateNewDepartmentAsync(Department department);
-        Task<Department> ShowDepartmentDetailsAsync(int id);
-        
-        void UpdateDepartment(Department department);
-        void DeleteDepartment(Department department);
+        Task<Department> GetDepartmentByIdAsync(int id);
+        Task UpdateDepartmentAsync(Department department);
+        Task DeleteDepartment(Department department);
 
     }
 }

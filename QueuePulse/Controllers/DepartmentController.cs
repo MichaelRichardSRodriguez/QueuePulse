@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -28,26 +29,27 @@ namespace QueuePulse.Controllers
         {
 
             return View();
+
         }
 
         [HttpGet]
         public async Task<IActionResult> GetDepartments(string searchQuery = "", string statusFilter = "All")
         {
-            var departments = await _service.LoadDepartmentsAsync();  //_context.Departments.AsQueryable();
-            
+            var departments = await _service.LoadDepartmentsAsync();
+
             if (statusFilter != "All")
             {
-                //departments = departments.Where(d => d.Status.Equals(statusFilter, StringComparison.OrdinalIgnoreCase));
                 departments = departments.Where(d => d.Status.ToUpper() == statusFilter.ToUpper());
             }
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                departments = departments.Where(d => d.Name.Contains(searchQuery) || d.Description.Contains(searchQuery));
+                departments = departments.Where(d => d.Name.Contains(searchQuery,StringComparison.OrdinalIgnoreCase) || d.Description.ToUpper().Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
             }
 
-            return Json(departments);        //await departments.ToListAsync());
+            return Json(departments.ToList());
         }
+
 
         // GET: Department/Details/5
         public async Task<IActionResult> Details(int id)
@@ -57,7 +59,7 @@ namespace QueuePulse.Controllers
                 return NotFound();
             }
 
-            var department = await _service.ShowDepartmentDetailsAsync(id);  //await _context.Departments.FirstOrDefaultAsync(m => m.Id == id);
+            var department = await _service.GetDepartmentByIdAsync(id); 
             if (department == null)
             {
                 return NotFound();
@@ -87,9 +89,7 @@ namespace QueuePulse.Controllers
                     department.CreatedBy = "MIKE";
                     department.Status = StaticDetails.ContentStatus_Active;
 
-                    await _service.CreateNewDepartmentAsync(department); //_context.Add(department);
-
-                    //await _context.SaveChangesAsync();
+                    await _service.CreateNewDepartmentAsync(department); 
 
                     TempData["success"] = "New department successfully created.";
 
@@ -116,7 +116,7 @@ namespace QueuePulse.Controllers
                 return NotFound();
             }
 
-            var department = await _service.ShowDepartmentDetailsAsync(id); //await _context.Departments.FindAsync(id);
+            var department = await _service.GetDepartmentByIdAsync(id); 
             if (department == null)
             {
                 return NotFound();
@@ -129,9 +129,9 @@ namespace QueuePulse.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Department department ) //[Bind("Id,Name,Description")] Department department)
+        public async Task<IActionResult> Edit(int id,  Department newDepartment) //[Bind("Id,Name,Description")] 
         {
-            if (id != department.Id)
+            if (id != newDepartment.Id)
             {
                 return NotFound();
             }
@@ -140,28 +140,26 @@ namespace QueuePulse.Controllers
             {
                 try
                 {
-                    var existingDepartment = _service.ShowDepartmentDetailsAsync(id);  //await _context.Departments.AsNoTracking().FirstOrDefaultAsync(d => d.Id == department.Id);
+                    var departmentFromDb = await _service.GetDepartmentByIdAsync(id);  
 
-					if (existingDepartment == null)
+					if (departmentFromDb == null)
 					{
 						return NotFound();
 					}
 
-                    department.Status = existingDepartment.Status.ToString(); //existingDepartment.Status;
-					//department.CreatedDate = existingDepartment.CreatedDate;
-					//department.CreatedBy = existingDepartment.CreatedBy;
-					department.UpdatedDate = DateTime.Now;
-					department.UpdatedBy = "MIKE";
+                    departmentFromDb.Name = newDepartment.Name;
+                    departmentFromDb.Description = newDepartment.Description;
+                    departmentFromDb.UpdatedDate = DateTime.Now;
+                    departmentFromDb.UpdatedBy = "MIKE";
 
-                    _service.UpdateDepartment(department); //_context.Update(department);
+                    await _service.UpdateDepartmentAsync(departmentFromDb); 
 
 					TempData["success"] = "Department updated successfully.";
 
-					//await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await DepartmentExists(department.Id))
+                    if (!await DepartmentExists(newDepartment.Id))
                     {
                         return NotFound();
                     }
@@ -172,7 +170,7 @@ namespace QueuePulse.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(department);
+            return View(newDepartment);
         }
 
         // GET: Department/Delete/5
@@ -183,8 +181,8 @@ namespace QueuePulse.Controllers
                 return NotFound();
             }
 
-            var department = await _service.ShowDepartmentDetailsAsync(id); //await _context.Departments
-                // .FirstOrDefaultAsync(m => m.Id == id);
+            var department = await _service.GetDepartmentByIdAsync(id); 
+
             if (department == null)
             {
                 return NotFound();
@@ -198,26 +196,23 @@ namespace QueuePulse.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var department = await _service.ShowDepartmentDetailsAsync(id);  //_context.Departments.FindAsync(id);
+            var department = await _service.GetDepartmentByIdAsync(id);
 
             if (department != null)
             {
 				TempData["success"] = "Department deleted successfully.";
-				//_context.Departments.Remove(department);
-                _service.DeleteDepartment(department);
+                await _service.DeleteDepartment(department);
             }
 
-            //await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         //// POST: Department/Delete/5
         //[HttpPost, ActionName("UpdateStatus")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateStatus(int id)
+        public async Task<IActionResult> UpdateStatus(int id, string searchQuery = "", string statusFilter = "All")
         {
-            var department = await _service.ShowDepartmentDetailsAsync(id); //await _context.Departments.FindAsync(id);
-
+            var department = await _service.GetDepartmentByIdAsync(id);
             if (department != null)
             {
 
@@ -230,12 +225,15 @@ namespace QueuePulse.Controllers
                     department.Status = StaticDetails.ContentStatus_Active;
                 }
 
-                _service.UpdateDepartment(department); // _context.Departments.Update(department);
-                //await _context.SaveChangesAsync();
+                await _service.UpdateDepartmentAsync(department);
 
                 TempData["success"] = "Department status updated successfully.";
 
-                return Json(new { success = true, message = "Department status updated successfully." });
+                //return Json(new { success = true, message = "Department status updated successfully." });
+                return Json(department);
+
+                // Return JSON response with redirect information
+                //return Json(new { success = true, redirectTo = Url.Action(nameof(GetDepartments), new { searchQuery = searchQuery, statusFilter = statusFilter }) });
             }
 
             return Json(new { success = false, message = "Department not found." });
@@ -243,7 +241,6 @@ namespace QueuePulse.Controllers
 
         private async Task<bool> DepartmentExists(int id)
         {
-            //return _context.Departments.Any(e => e.Id == id);
 
             return await _service.isExistingDepartmentId(id);
         }

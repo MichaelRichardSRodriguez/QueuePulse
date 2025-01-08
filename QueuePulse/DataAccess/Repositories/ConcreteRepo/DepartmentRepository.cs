@@ -15,6 +15,7 @@ namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
         public void UpdateDepartment(Department department)
         {
             _context.Update(department);
+            
         }
     }
 }

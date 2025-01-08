@@ -17,7 +17,7 @@ namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
 
         public async Task CompleteAsync()
         {
-            await   _context.SaveChangesAsync();
+            await  _context.SaveChangesAsync();
         }
 
         public void Dispose()

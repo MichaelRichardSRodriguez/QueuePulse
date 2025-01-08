@@ -55,6 +55,7 @@ namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
         public async Task<T> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);
+
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using QueuePulse.DataAccess.Repositories.RepoInterfaces;
 using QueuePulse.DataAccess.Services.ServInterfaces;
 using QueuePulse.Models;
+using System.Linq.Expressions;
 
 namespace QueuePulse.DataAccess.Services.ConcreteServ
 {
@@ -19,9 +20,10 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
             await _unitOfWork.CompleteAsync();
         }
 
-        public void DeleteDepartment(Department department)
+        public async Task DeleteDepartment(Department department)
         {
             _unitOfWork.Department.DeleteRecord(department);
+            await _unitOfWork.CompleteAsync();
         }
 
         public async Task<bool> isExistingDepartmentId(int id)
@@ -41,17 +43,20 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
 
         public async Task<IEnumerable<Department>> LoadDepartmentsAsync()
         {
+         
             return await _unitOfWork.Department.GetAllAsync();
+
         }
 
-        public async Task<Department> ShowDepartmentDetailsAsync(int id)
+        public async Task<Department> GetDepartmentByIdAsync(int id)
         {
             return await _unitOfWork.Department.GetByIdAsync(id);
         }
 
-        public void UpdateDepartment(Department department)
+        public async Task UpdateDepartmentAsync(Department department)
         {
             _unitOfWork.Department.UpdateDepartment(department);
+            await _unitOfWork.CompleteAsync();
         }
     }
 }

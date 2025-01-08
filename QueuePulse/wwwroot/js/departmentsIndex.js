@@ -7,10 +7,33 @@
         loadDepartments();
     });
 
+    document.getElementById("searchButton").addEventListener("click", function () {
+        document.getElementById("searchInput").focus();
+        loadDepartments();
+    });
 
     document.getElementById("searchInput").addEventListener("input", function () {
         loadDepartments();
     });
+
+
+    //document.getElementById("searchInput").addEventListener("keydown", function (event) {
+
+    //    var inputValue = document.getElementById("searchInput").value;
+
+    //    if (event.key === "Enter") {
+    //        if (inputValue.trim() !== "") {
+    //            document.getElementById("searchButton").click();
+    //        }
+    //    }
+    //    else {
+    //        if (inputValue.trim() === "") {
+    //            loadDepartments();
+    //        }
+    //    }
+
+    //});
+
 
 
     function loadDepartments() {
@@ -33,6 +56,26 @@
             });
     }
 
+    function updateDepartmentStatus(itemId) {
+        fetch('/department/UpdateStatus/' + itemId, {
+            method: 'GET', // or 'POST' depending on your API requirement
+            headers: {
+                'Content-Type': 'application/json',
+                // Add any other headers if necessary (e.g., authorization tokens)
+            },
+        })
+            .then(response => response.json())  // Assuming the response is JSON
+            .then(data => {
+                console.log('Success:', data);
+                // Optionally, you can update the UI with the returned data or show a success message
+                loadDepartments();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle any errors here
+            });
+    }
+
     function renderTable(data) {
         const tableBody = document.querySelector("#departmentTable tbody");
         tableBody.innerHTML = ""; // Clear previous rows
@@ -40,7 +83,7 @@
         if (data.length === 0) {
             tableBody.innerHTML = "<tr><td colspan='4'>No departments found.</td></tr>";
             return;
-        }
+    }
 
         data.forEach(item => {
             const row = document.createElement("tr");
@@ -48,6 +91,8 @@
             // Name column
             const nameCell = document.createElement("td");
             nameCell.textContent = item.name;
+            nameCell.style.fontWeight = "bold";
+            nameCell.style.color = "#155E95";
             row.appendChild(nameCell);
 
             // Description column
@@ -59,7 +104,7 @@
             const statusCell = document.createElement("td");
             const statusButton = document.createElement("a");
             // Determine the class based on the status
-            statusButton.className = item.status.toUpperCase() === "ACTIVE" ? "btn btn-success btn-sm" : "btn btn-danger btn-sm";
+            statusButton.className = item.status.toUpperCase() === "ACTIVE" ? "btn btn-success btn-sm w-100" : "btn btn-danger btn-sm w-100";
             // Set the text content based on the status
             statusButton.textContent = item.status;
 
@@ -83,8 +128,10 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         // If confirmed, navigate to the URL
-                        window.location.href = "/department/UpdateStatus/" + item.id;  // Redirect to the deactivation/activation URL
-                        //loadDepartments();
+                        //window.location.href = "/department/UpdateStatus/" + item.id;  // Redirect to the deactivation/activation URL
+
+                        updateDepartmentStatus(item.id);
+                        loadDepartments();
                     }
                 });
             });
@@ -93,9 +140,11 @@
             // Actions column
             const actionsCell = document.createElement("td");
             actionsCell.innerHTML = `
-                <a class="btn btn-warning btn-sm" href="/department/Edit/${item.id}">Edit</a>
-                <a class="btn btn-primary btn-sm" href="/department/Details/${item.id}">Details</a>
-                <a class="btn btn-danger btn-sm" href="/department/Delete/${item.id}">Delete</a>
+
+                <a class="btn btn-warning btn-sm w-25" href="/department/Edit/${item.id}">Edit</a>
+                <a class="btn btn-primary btn-sm w-25" href="/department/Details/${item.id}">Details</a>
+                <a class="btn btn-danger btn-sm w-25" href="/department/Delete/${item.id}">Delete</a>
+
             `;
             row.appendChild(actionsCell);
 
@@ -104,3 +153,5 @@
         });
     }
 });
+
+
