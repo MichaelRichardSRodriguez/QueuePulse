@@ -5,11 +5,11 @@ using System.Linq.Expressions;
 
 namespace QueuePulse.DataAccess.Services.ConcreteServ
 {
-    public class DepartmentService : IDepartmentService
+    public class DepartmentManagementService : IDepartmentManagementService
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        public DepartmentService(IUnitOfWork unitOfWork)
+        public DepartmentManagementService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }

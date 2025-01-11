@@ -1,0 +1,43 @@
+﻿@model QueuePulse.Models.ViewModels.ServicesVM
+
+@{
+    ViewData["Title"] = "Create Service";
+}
+
+<div class="container col-md-5 mt-4">
+    <div class="row card p-3 border-top border-2 shadow rounded" style="background-color:azure;">
+        <h4><strong>Service Creation</strong></h4>
+        <hr />
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="QueueService.Department_Id" class="control-label"></label>
+                    <select asp-for="QueueService.Department_Id" asp-items="@Model.DepartmentList" class="form-select" autofocus></select>
+                    <span asp-validation-for="QueueService.Department_Id" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="QueueService.Name" class="control-label"></label>
+                    <input asp-for="QueueService.Name" class="form-control" autofocus />
+                    <span asp-validation-for="QueueService.Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="QueueService.Description" class="control-label"></label>
+                    <textarea asp-for="QueueService.Description" class="form-control" style="height:120px;"></textarea>
+                    <span asp-validation-for="QueueService.Description" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-2">
+                    <input type="submit" value="Create" class="btn btn-success" />
+                    <a asp-action="Index">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

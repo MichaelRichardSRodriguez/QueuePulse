@@ -2,7 +2,8 @@
 {
     public interface IUnitOfWork: IDisposable
     {
-        IDeparmentRepository Department { get; }
+        IDepartmentRepository Department { get; }
+        IQueueServiceRepository QueueService { get; }
 
         Task CompleteAsync();
 

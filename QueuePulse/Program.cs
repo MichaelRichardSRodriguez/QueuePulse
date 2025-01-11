@@ -13,7 +13,8 @@ builder.Services.AddControllersWithViews();
 //Add Dbcontext
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("QueuePulseConnection")));
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
-builder.Services.AddScoped<IDepartmentService,DepartmentService>();
+builder.Services.AddScoped<IDepartmentManagementService,DepartmentManagementService>();
+builder.Services.AddScoped<IServiceManagementService, ServiceManagementService>();
 
 var app = builder.Build();
 

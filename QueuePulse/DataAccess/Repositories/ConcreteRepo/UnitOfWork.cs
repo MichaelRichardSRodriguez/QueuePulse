@@ -7,12 +7,14 @@ namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
     {
         private readonly ApplicationDbContext _context;
 
-        public IDeparmentRepository Department { get; private set; }
+        public IDepartmentRepository Department { get; private set; }
+        public IQueueServiceRepository QueueService { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             Department = new DepartmentRepository(_context);
+			QueueService = new QueueServiceRepository(_context);
         }
 
         public async Task CompleteAsync()

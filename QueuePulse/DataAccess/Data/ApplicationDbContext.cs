@@ -7,6 +7,7 @@ namespace QueuePulse.DataAccess.Data
     {
 
         public DbSet<Department> Departments { get; set; }
+        public DbSet<QueueService> QueueServices { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -18,6 +19,7 @@ namespace QueuePulse.DataAccess.Data
             //base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new DepartmentConfig());
+            modelBuilder.ApplyConfiguration(new QueueServiceConfig());
         }
     }
 }

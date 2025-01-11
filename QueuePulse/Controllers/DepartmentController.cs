@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QueuePulse.DataAccess.Data;
+using QueuePulse.DataAccess.Services.ConcreteServ;
 using QueuePulse.DataAccess.Services.ServInterfaces;
 using QueuePulse.Models;
 using QueuePulse.Utility;
@@ -16,9 +17,9 @@ namespace QueuePulse.Controllers
     public class DepartmentController : Controller
     {
         //private readonly ApplicationDbContext _context;
-        private readonly IDepartmentService _service;
+        private readonly IDepartmentManagementService _service;
 
-        public DepartmentController(IDepartmentService service) //ApplicationDbContext context)
+        public DepartmentController(IDepartmentManagementService service) //ApplicationDbContext context)
         {
             //_context = context;
             _service = service;
@@ -87,7 +88,6 @@ namespace QueuePulse.Controllers
                 {
                     department.CreatedDate = DateTime.Now;
                     department.CreatedBy = "MIKE";
-                    department.Status = StaticDetails.ContentStatus_Active;
 
                     await _service.CreateNewDepartmentAsync(department); 
 
@@ -200,8 +200,17 @@ namespace QueuePulse.Controllers
 
             if (department != null)
             {
-				TempData["success"] = "Department deleted successfully.";
-                await _service.DeleteDepartment(department);
+                try
+                {
+                    await _service.DeleteDepartment(department);
+                    TempData["success"] = "Department deleted successfully.";
+                }
+                catch (DbUpdateException)
+                {
+                    return BadRequest("Unable to Delete Department, because it has existing services.\n"
+                                        + "You can DEACTIVATE this Department to prevent users from using it \n"
+                                        + "or you can delete the Services first before deleting this department.");
+                }
             }
 
             return RedirectToAction(nameof(Index));

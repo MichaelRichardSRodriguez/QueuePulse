@@ -1,6 +1,65 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+﻿@* @{
+	ViewData["Title"] = "Privacy Policy";
+} *@
 
-<p>Use this page to detail your site's privacy policy.</p>
+@* <h1>@ViewData["Title"]</h1>
+
+<p>Use this page to detail your site's privacy policy.</p> *@
+
+@{
+    Layout = null;  // Use this to remove the layout if you don't want a header/footer
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui">
+    <title>Full Screen Razor View</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #content {
+            height: 100%;
+            width: 100%;
+            background-color: lightgray;
+        }
+
+        .nav-menu {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1>Welcome to Full-Screen Razor View!</h1>
+        <button onclick="requestFullscreen()">Go Full Screen</button>
+        <button onclick="toggleMenu()">Toggle Menu</button>
+    </div>
+
+    <script>
+        function requestFullscreen() {
+            var element = document.documentElement;
+            if (element.requestFullscreen) {
+                element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) { // Firefox
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) { // IE/Edge
+                element.msRequestFullscreen();
+            }
+        }
+
+        function toggleMenu() {
+            var menu = document.querySelector('.nav-menu');
+            menu.style.display = (menu.style.display === 'none' ? 'block' : 'none');
+        }
+    </script>
+</body>
+</html>
