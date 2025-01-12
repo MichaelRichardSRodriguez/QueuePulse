@@ -26,11 +26,15 @@ namespace QueuePulse.Controllers
         }
 
         // GET: QueueService
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
 
+            //var queueServices = await _service.GetAllServicesAsync();
+
+            //return View(queueServices);
+
             return View();
-        }
+		}
 
         [HttpGet]
         public async Task<IActionResult> GetServices(string searchQuery = "", string statusFilter = "All")
@@ -48,19 +52,6 @@ namespace QueuePulse.Controllers
                 queueServices = queueServices.Where(q => q.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)
                                                     || q.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
             }
-
-			////--------------------------------------------
-			//var queueServices = _context.QueueServices
-			//                             .Include(q => q.Department)
-			//                             .Select(q => new
-			//                             {
-			//                                 DepartmentName = q.Department.Name,
-			//                                 q.Name,
-			//                                 q.Description,
-			//                                 q.Status,
-			//                                 q.Id
-			//                             }).ToList();
-
 
 			return Json(queueServices);
         }

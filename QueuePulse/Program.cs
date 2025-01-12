@@ -4,6 +4,7 @@ using QueuePulse.DataAccess.Repositories.ConcreteRepo;
 using QueuePulse.DataAccess.Repositories.RepoInterfaces;
 using QueuePulse.DataAccess.Services.ConcreteServ;
 using QueuePulse.DataAccess.Services.ServInterfaces;
+using QueuePulse.Models.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IDepartmentManagementService,DepartmentManagementService>();
 builder.Services.AddScoped<IServiceManagementService, ServiceManagementService>();
+
+// Handle circular references globally
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+	options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
 
 var app = builder.Build();
 

@@ -50,10 +50,28 @@
 				</thead>
 				<tbody id="serviceList">
 					<!-- Data will be populated here dynamically using javascript -->
+
+@* 					@foreach(var item in Model)
+					{
+						<tr>
+							<td>
+								@Html.DisplayFor(modelItem => item.Name)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Department.Name)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Description)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Status)
+							</td>
+						</tr>
+					} *@
 				</tbody>
 			</table>
 		</div>
 	</div>
 </div>
 
-<script src="~/js/queueServicesIndex.js"></script> 
+<script src="~/js/queueServicesIndex.js"></script>

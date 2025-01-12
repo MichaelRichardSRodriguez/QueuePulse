@@ -66,10 +66,6 @@
             .catch(error => {
                 toastr.error('An error occurred while updating the service status: ' + error.message);
             });
-
-
-
-
     }
 
     function renderTable(data) {
@@ -93,7 +89,7 @@
 
             // Department column
             const DepartmentCell = document.createElement("td");
-            DepartmentCell.textContent = item.name;
+            DepartmentCell.textContent = item.department.name;
             row.appendChild(DepartmentCell);
 
             // Description column
@@ -128,9 +124,6 @@
                     confirmButtonText: 'Yes, change status!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // If confirmed, navigate to the URL
-                        //window.location.href = "/queueService/UpdateStatus/" + item.id;  // Redirect to the deactivation/activation URL
-
                         updateServiceStatus(item.id);
                         loadServices();
                     }

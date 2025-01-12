@@ -2,6 +2,13 @@
 
 @{
     ViewData["Title"] = "Department Details";
+    var disabledEdit = "disabled";
+
+    @if(Model.QueueService.Status?.ToUpper() == "ACTIVE")
+    {
+        disabledEdit = string.Empty;
+    }
+
 }
 
 
@@ -61,7 +68,7 @@
                 </dd>
             </dl>
             <div>
-                <a class="btn btn-warning" asp-action="Edit" asp-route-id="@Model?.QueueService.Id">Edit</a>
+                <a class="btn btn-warning @disabledEdit" asp-action="Edit" asp-route-id="@Model?.QueueService.Id">Edit</a>
                 <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model?.QueueService.Id">Delete</a>
                 <a asp-action="Index">Back to List</a>
             </div>

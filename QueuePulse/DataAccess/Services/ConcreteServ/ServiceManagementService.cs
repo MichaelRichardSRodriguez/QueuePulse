@@ -55,8 +55,8 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
 
 		public async Task<IEnumerable<QueueService>> GetAllServicesAsync(Expression<Func<QueueService,bool>>? filter = null)
 		{
-			//var varQueueService = await _unitOfWork.QueueService.GetAllAsync(includeProperties: "Department");
-			var varQueueService = await _unitOfWork.QueueService.GetAllAsync();
+			var varQueueService = await _unitOfWork.QueueService.GetAllAsync(includeProperties: "Department");
+			//var varQueueService = await _unitOfWork.QueueService.GetAllAsync();
 			return varQueueService;
 
 		}
