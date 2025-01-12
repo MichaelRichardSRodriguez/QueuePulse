@@ -33,28 +33,39 @@ namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
 
         public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
         {
-            var queryObject = _dbSet.AsQueryable();
+            //var queryObject = _dbSet.AsQueryable();
+            IQueryable<T> queryObject = _dbSet;
 
-            if (filter != null)
-            {
-                queryObject = queryObject.Where(filter);
-            }
-
-            if (!string.IsNullOrEmpty(includeProperties))
+			if (!string.IsNullOrEmpty(includeProperties))
             {
                 foreach (var property in includeProperties.Split(new[] {','},StringSplitOptions.RemoveEmptyEntries))
                 {
-                    queryObject.Include(property);
+                    queryObject =  queryObject.Include(property);
                 }
 
             }
 
-            return await queryObject.ToListAsync();
+			if (filter != null)
+			{
+				queryObject = queryObject.Where(filter);
+			}
+
+			return  await queryObject.ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(int id, string? includeProperties = null)
         {
-            return await _dbSet.FindAsync(id);
+            var queryObject = _dbSet.AsQueryable();
+
+            if (!string.IsNullOrEmpty(includeProperties))
+            {
+                foreach (var property in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    queryObject = queryObject.Include(property);
+                }
+            }
+
+            return await queryObject.FirstOrDefaultAsync(e => EF.Property<int>(e, "Id") == id);
 
         }
     }

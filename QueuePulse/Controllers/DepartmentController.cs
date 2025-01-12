@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using QueuePulse.DataAccess.Data;
-using QueuePulse.DataAccess.Services.ConcreteServ;
 using QueuePulse.DataAccess.Services.ServInterfaces;
 using QueuePulse.Models;
 using QueuePulse.Utility;
@@ -86,14 +79,20 @@ namespace QueuePulse.Controllers
             {
                 try
                 {
-                    department.CreatedDate = DateTime.Now;
-                    department.CreatedBy = "MIKE";
+                    if(!await _service.isExistingDepartmentName(department.Id,department.Name))
+                    {
+                        department.CreatedDate = DateTime.Now;
+                        department.CreatedBy = "MIKE";
 
-                    await _service.CreateNewDepartmentAsync(department); 
+                        await _service.CreateNewDepartmentAsync(department);
 
-                    TempData["success"] = "New department successfully created.";
+                        TempData["success"] = "New department successfully created.";
 
-                    return RedirectToAction(nameof(Index));
+                        return RedirectToAction(nameof(Index));
+
+                    }
+
+                    ModelState.AddModelError("Name", "Department Name already exists.");
 
                 }
                 catch (Exception ex)
@@ -140,6 +139,14 @@ namespace QueuePulse.Controllers
             {
                 try
                 {
+
+                    if (await _service.isExistingDepartmentName(newDepartment.Id, newDepartment.Name))
+                    {
+                        ModelState.AddModelError("Name", "Department Name already exists.");
+
+                        return View(newDepartment);
+                    }
+
                     var departmentFromDb = await _service.GetDepartmentByIdAsync(id);  
 
 					if (departmentFromDb == null)
@@ -168,6 +175,7 @@ namespace QueuePulse.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
             return View(newDepartment);
@@ -207,6 +215,7 @@ namespace QueuePulse.Controllers
                 }
                 catch (DbUpdateException)
                 {
+                    TempData["error"] = "Record Deletion Unsuccessful.";
                     return BadRequest("Unable to Delete Department, because it has existing services.\n"
                                         + "You can DEACTIVATE this Department to prevent users from using it \n"
                                         + "or you can delete the Services first before deleting this department.");

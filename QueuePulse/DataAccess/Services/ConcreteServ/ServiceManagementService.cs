@@ -1,4 +1,5 @@
-﻿using QueuePulse.DataAccess.Repositories.RepoInterfaces;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using QueuePulse.DataAccess.Repositories.RepoInterfaces;
 using QueuePulse.DataAccess.Services.ServInterfaces;
 using QueuePulse.Models;
 using QueuePulse.Models.ViewModels;
@@ -31,24 +32,20 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
 
 		public async Task<QueueService> GetServicesByIdAsync(int id)
 		{
-			return await _unitOfWork.QueueService.GetByIdAsync(id);
+			return await _unitOfWork.QueueService.GetByIdAsync(id,"Department");
 		}
 
-		public async Task<ServicesVM> GetServicesViewModelAsync()
+		public async Task<IEnumerable<SelectListItem>> GetDepartmentListAsync()
 		{
-			var servicesVM = new ServicesVM()
-			{
-				QueueService = new QueueService(),
-				DepartmentList = await _unitOfWork.Department.GetDepartmentListAsync()
-			};
+			var DepartmentList = await _unitOfWork.Department.GetDepartmentListAsync();
 
-			return servicesVM;
+			return DepartmentList;
 		}
 
 		public async Task<bool> isExistingServiceIdAsync(int id)
 		{
 			return await _unitOfWork.QueueService.ExistsAsync(q => q.Id == id);
-				
+
 		}
 
 		public async Task<bool> isExistingServiceNameAsync(int id, string name)
@@ -56,10 +53,12 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
 			return await _unitOfWork.QueueService.ExistsAsync(q => q.Id != id && q.Name == name);
 		}
 
-		public async Task<IEnumerable<QueueService>> LoadServicesAsync(Expression<Func<QueueService, bool>>? filter = null, string? includeProperties = null)
+		public async Task<IEnumerable<QueueService>> GetAllServicesAsync(Expression<Func<QueueService,bool>>? filter = null)
 		{
+			//var varQueueService = await _unitOfWork.QueueService.GetAllAsync(includeProperties: "Department");
+			var varQueueService = await _unitOfWork.QueueService.GetAllAsync();
+			return varQueueService;
 
-			return await _unitOfWork.QueueService.GetAllAsync(filter,includeProperties);
 		}
 
 		public async Task UpdateServiceAsync(QueueService queueService)

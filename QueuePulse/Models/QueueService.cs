@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.Text.Json.Serialization;
 
 namespace QueuePulse.Models
 {
@@ -26,6 +27,7 @@ namespace QueuePulse.Models
         public string? Status { get; set; }
 
         [ValidateNever]
+        //[JsonIgnore]
         public Department Department { get; set; }
 
     }

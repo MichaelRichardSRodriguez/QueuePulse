@@ -33,7 +33,7 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
 
         public async Task<bool> isExistingDepartmentName(int id, string name)
         {
-            return await _unitOfWork.Department.ExistsAsync(d => d.Id == id && d.Name == name);
+            return await _unitOfWork.Department.ExistsAsync(d => d.Id != id && d.Name == name);
         }
 
         public async Task<bool> isExistingDepartmentName(int id)
@@ -43,10 +43,10 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
 
         public async Task<IEnumerable<Department>> LoadDepartmentsAsync()
         {
-         
+
             return await _unitOfWork.Department.GetAllAsync();
 
-        }
+		}
 
         public async Task<Department> GetDepartmentByIdAsync(int id)
         {

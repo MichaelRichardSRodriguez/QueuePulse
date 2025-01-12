@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,36 +18,66 @@ namespace QueuePulse.Controllers
 {
     public class QueueServiceController : Controller
     {
-        private readonly IServiceManagementService _serviceManagementService;
+        private readonly IServiceManagementService _service;
 
-        public QueueServiceController(IServiceManagementService serviceManagementService)
+        public QueueServiceController(IServiceManagementService service)
         {
-			_serviceManagementService = serviceManagementService;
+			_service = service;
         }
 
         // GET: QueueService
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            //var applicationDbContext = _context.QueueServices.Include(q => q.Department);
-            var queueServices = await _serviceManagementService.LoadServicesAsync(includeProperties: "Department");
 
-            return View(queueServices.ToList());
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetServices(string searchQuery = "", string statusFilter = "All")
+        {
+
+            var queueServices = await _service.GetAllServicesAsync();
+
+            if (statusFilter != "All")
+            {
+                queueServices = queueServices.Where(q => q.Status == statusFilter);
+            }
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                queueServices = queueServices.Where(q => q.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)
+                                                    || q.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+            }
+
+			////--------------------------------------------
+			//var queueServices = _context.QueueServices
+			//                             .Include(q => q.Department)
+			//                             .Select(q => new
+			//                             {
+			//                                 DepartmentName = q.Department.Name,
+			//                                 q.Name,
+			//                                 q.Description,
+			//                                 q.Status,
+			//                                 q.Id
+			//                             }).ToList();
+
+
+			return Json(queueServices);
         }
 
         // GET: QueueService/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
 
-			//var queueService = await _context.QueueServices
-			//    .Include(q => q.Department)
-			//    .FirstOrDefaultAsync(m => m.Id == id);
-
-			//var queueService = await _unitOfWork.QueueService.GetAllAsync(q => q.Id == id, includeProperties: "Department");
-			var queueService  = await _serviceManagementService.LoadServicesAsync(q => q.Id == id, includeProperties: "Department");
+            var queueService = new ServicesVM()
+            {
+                QueueService = await _service.GetServicesByIdAsync(id),
+                DepartmentList = await _service.GetDepartmentListAsync()
+            };
 
 			if (queueService == null)
             {
@@ -58,7 +90,11 @@ namespace QueuePulse.Controllers
         // GET: QueueService/Create
         public async Task<IActionResult> Create()
         {
-            var servicesVM = await _serviceManagementService.GetServicesViewModelAsync();
+            var servicesVM = new ServicesVM()
+            {
+                QueueService = new(),
+                DepartmentList = await _service.GetDepartmentListAsync()
+            };
 
             return View(servicesVM);
         }
@@ -72,34 +108,43 @@ namespace QueuePulse.Controllers
         {
             if (ModelState.IsValid)
             {
-                servicesVM.QueueService.CreatedDate = DateTime.Now;
-                servicesVM.QueueService.CreatedBy = "MIKE";
 
-                await _serviceManagementService.CreateNewServiceAsync(servicesVM.QueueService);
+                if (!await _service.isExistingServiceNameAsync(servicesVM.QueueService.Id,servicesVM.QueueService.Name))
+                {
+                    servicesVM.QueueService.CreatedDate = DateTime.Now;
+                    servicesVM.QueueService.CreatedBy = "MIKE";
 
-                return RedirectToAction(nameof(Index));
+                    await _service.CreateNewServiceAsync(servicesVM.QueueService);
+
+                    return RedirectToAction(nameof(Index));
+
+                }
+
+                ModelState.AddModelError("QueueService.Name", "Service Name already exists.");
+
             }
 
-            //servicesVM.DepartmentList = _context.Departments.Select(d => new SelectListItem
-            //{
-            //    Text = d.Name,
-            //});
-            //    Value = d.Id.ToString()
+            servicesVM.DepartmentList = await _service.GetDepartmentListAsync();
 
             return View(servicesVM);
         }
 
         // GET: QueueService/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
 
-            var serviceVM = await _serviceManagementService.GetServicesViewModelAsync();
+			var serviceVM = new ServicesVM()
+			{
+				QueueService = await _service.GetServicesByIdAsync(id),
+				DepartmentList = await _service.GetDepartmentListAsync()
+			};
 
-            if (serviceVM.QueueService == null)
+
+			if (serviceVM.QueueService == null)
             {
                 return NotFound();
             }
@@ -123,7 +168,7 @@ namespace QueuePulse.Controllers
             {
                 try
                 {
-                    var servicesFromDb = await _serviceManagementService.GetServicesByIdAsync(id);
+                    var servicesFromDb = await _service.GetServicesByIdAsync(id);
 
                     if (servicesFromDb == null)
                     {
@@ -132,10 +177,11 @@ namespace QueuePulse.Controllers
 
                     servicesFromDb.Name = servicesVM.QueueService.Name;
                     servicesFromDb.Description = servicesVM.QueueService.Description;
+                    servicesFromDb.Department_Id = servicesVM.QueueService.Department_Id;
                     servicesFromDb.UpdatedDate = DateTime.Now;
                     servicesFromDb.UpdatedBy = "MIKE";
 
-                    await _serviceManagementService.UpdateServiceAsync(servicesFromDb);
+                    await _service.UpdateServiceAsync(servicesFromDb);
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -152,11 +198,7 @@ namespace QueuePulse.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            //servicesVM.DepartmentList = _context.Departments.Select(d => new SelectListItem
-            //{
-            //    Text = d.Name,
-            //    Value = d.Id.ToString()
-            //});
+            servicesVM.DepartmentList = await _service.GetDepartmentListAsync();  
 
             return View(servicesVM);
         }
@@ -169,7 +211,7 @@ namespace QueuePulse.Controllers
                 return NotFound();
             }
 
-            var queueService = await _serviceManagementService.GetServicesByIdAsync(id);
+            var queueService = await _service.GetServicesByIdAsync(id);
 
             if (queueService == null)
             {
@@ -184,10 +226,10 @@ namespace QueuePulse.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var queueService = await _serviceManagementService.GetServicesByIdAsync(id);
+            var queueService = await _service.GetServicesByIdAsync(id);
             if (queueService != null)
             {
-                await _serviceManagementService.DeleteServiceAsyncAsync(queueService);
+                await _service.DeleteServiceAsyncAsync(queueService);
             }
 
             return RedirectToAction(nameof(Index));
@@ -195,7 +237,34 @@ namespace QueuePulse.Controllers
 
         private async Task<bool> QueueServiceExists(int id)
         {
-            return await _serviceManagementService.isExistingServiceIdAsync(id);
+            return await _service.isExistingServiceIdAsync(id);
         }
-    }
+
+		public async Task<IActionResult> UpdateStatus(int id, string searchQuery = "", string statusFilter = "All")
+		{
+			var department = await _service.GetServicesByIdAsync(id);
+			if (department != null)
+			{
+
+				if (department.Status == StaticDetails.ContentStatus_Active)
+				{
+					department.Status = StaticDetails.ContentStatus_Inactive;
+				}
+				else
+				{
+					department.Status = StaticDetails.ContentStatus_Active;
+				}
+
+				await _service.UpdateServiceAsync(department);
+
+				//TempData["success"] = "Department status updated successfully.";
+
+				return Json(new { success = true, message = "Department status updated successfully." });
+				//return Json(department);
+
+			}
+
+			return Json(new { success = false, message = "Department not found." });
+		}
+	}
 }
