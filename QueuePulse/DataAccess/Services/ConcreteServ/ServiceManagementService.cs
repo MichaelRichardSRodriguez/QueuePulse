@@ -37,9 +37,8 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
 
 		public async Task<IEnumerable<SelectListItem>> GetDepartmentListAsync()
 		{
-			var DepartmentList = await _unitOfWork.Department.GetDepartmentListAsync();
+			return await _unitOfWork.Department.GetDepartmentListAsync();
 
-			return DepartmentList;
 		}
 
 		public async Task<bool> isExistingServiceIdAsync(int id)
@@ -55,8 +54,7 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
 
 		public async Task<IEnumerable<QueueService>> GetAllServicesAsync(Expression<Func<QueueService,bool>>? filter = null)
 		{
-			var varQueueService = await _unitOfWork.QueueService.GetAllAsync(includeProperties: "Department");
-			return varQueueService;
+			return await _unitOfWork.QueueService.GetAllAsync(includeProperties: "Department");
 
 		}
 

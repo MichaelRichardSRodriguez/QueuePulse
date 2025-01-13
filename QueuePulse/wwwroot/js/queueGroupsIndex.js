@@ -26,14 +26,15 @@
         tableBody.innerHTML = "<tr><td colspan='3'>Loading...</td></tr>";
 
         // AJAX request to get data
-        fetch(`/QueueGroup/GetGroups?searchQuery=${searchQuery}&statusFilter=${status}`)
+        fetch(`/QueueGroup/GetGroups?searchQuery=${searchQuery}&statusFilter=${status}`, {
+            method: 'GET',
+        })
             .then(response => response.json())
             .then(data => {
                 renderTable(data);
             })
             .catch(error => {
-                //console.error('Error fetching services:', error);
-                alert(error);
+                toastr.error('Failed to retrieve group list.' + error.message);
                 tableBody.innerHTML = "<tr><td colspan='3'>Error loading data.</td></tr>";
             });
     }

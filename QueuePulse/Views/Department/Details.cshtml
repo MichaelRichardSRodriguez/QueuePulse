@@ -2,11 +2,11 @@
 
 @{
     ViewData["Title"] = "Department Details";
-    var disabledEdit = "disabled";
+    var disabledEdit = string.Empty;
 
-    @if (Model.Status?.ToUpper() == "ACTIVE")
+    @if (Model.Status?.ToUpper() != "ACTIVE")
     {
-        disabledEdit = string.Empty;
+        disabledEdit = "disabled";
     }
 }
 

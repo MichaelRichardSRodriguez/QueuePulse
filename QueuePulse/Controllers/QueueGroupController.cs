@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol.Core.Types;
 using QueuePulse.DataAccess.Data;
+using QueuePulse.DataAccess.Services.ServInterfaces;
 using QueuePulse.Models;
 using QueuePulse.Utility;
 
@@ -14,11 +15,12 @@ namespace QueuePulse.Controllers
 {
 	public class QueueGroupController : Controller
 	{
-		private readonly ApplicationDbContext _context;
+		private readonly IQueueGroupService _service;
 
-		public QueueGroupController(ApplicationDbContext context)
+
+		public QueueGroupController(IQueueGroupService service)
 		{
-			_context = context;
+			_service = service;
 		}
 
 		// GET: QueueGroup
@@ -30,46 +32,45 @@ namespace QueuePulse.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetGroups(string searchQuery = "", string statusFilter = "All")
 		{
-			var queueGroup = _context.QueueGroups.AsQueryable();
+			var queueGroup = await _service.GetAllGroupsAsync();
 
-			if (!string.IsNullOrEmpty(searchQuery))
-			{
-				queueGroup = queueGroup.Where(d => d.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)
-												|| d.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
-
-			}
-
-			if (statusFilter != "All")
-			{
-				//--This One Works--
-				//queueGroup = queueGroup.Where(d => d.Status.ToUpper() == statusFilter.ToUpper());
+            if (statusFilter != "All")
+            {
+                ////-- This One Works when using _context --
+                //queueGroup = queueGroup.Where(d => d.Status.ToUpper() == statusFilter.ToUpper());
 
 				//--This One Doesnt Work--
-				//queueGroup = queueGroup.Where(d =>
-				//d.Status != null &&
-				//d.Status.Trim().Equals(statusFilter.Trim(), StringComparison.OrdinalIgnoreCase));
-
-				//--This One Works--
 				queueGroup = queueGroup.Where(d =>
-							d.Status != null &&
-							EF.Functions.Like(d.Status.Trim(), statusFilter.Trim()));
+				d.Status != null &&
+				d.Status.Trim().Equals(statusFilter.Trim(), StringComparison.OrdinalIgnoreCase));
+
+				////--This One Works--
+				//queueGroup = queueGroup.Where(d =>
+				//            d.Status != null &&
+				//            EF.Functions.Like(d.Status.Trim(), statusFilter.Trim()));
 
 			}
 
-			return Json(await queueGroup.ToListAsync());
+            if (!string.IsNullOrEmpty(searchQuery))
+			{
+                queueGroup = queueGroup.Where(d => d.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)
+                								|| d.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+            }
+
+			return Json(queueGroup.ToList());
 		}
 
 		// GET: QueueGroup/Details/5
-		public async Task<IActionResult> Details(int? id)
+		public async Task<IActionResult> Details(int id)
 		{
-			if (id == null)
+			if (id == 0)
 			{
 				return NotFound();
 			}
 
-			var queueGroup = await _context.QueueGroups
-				.FirstOrDefaultAsync(m => m.Id == id);
-			if (queueGroup == null)
+			var queueGroup = await _service.GetGroupsByIdAsync(id);
+
+            if (queueGroup == null)
 			{
 				return NotFound();
 			}
@@ -95,8 +96,7 @@ namespace QueuePulse.Controllers
 				queueGroup.CreatedDate = DateTime.Now;
 				queueGroup.CreatedBy = "MIKE";
 
-				_context.Add(queueGroup);
-				await _context.SaveChangesAsync();
+				await _service.CreateNewGroupAsync(queueGroup);
 
 				return RedirectToAction(nameof(Index));
 			}
@@ -104,15 +104,16 @@ namespace QueuePulse.Controllers
 		}
 
 		// GET: QueueGroup/Edit/5
-		public async Task<IActionResult> Edit(int? id)
+		public async Task<IActionResult> Edit(int id)
 		{
-			if (id == null)
+			if (id == 0)
 			{
 				return NotFound();
 			}
 
-			var queueGroup = await _context.QueueGroups.FindAsync(id);
-			if (queueGroup == null)
+			var queueGroup = await _service.GetGroupsByIdAsync(id);
+
+            if (queueGroup == null)
 			{
 				return NotFound();
 			}
@@ -124,7 +125,7 @@ namespace QueuePulse.Controllers
 		// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,CreatedDate,UpdatedDate,CreatedBy,UpdatedBy,Status")] QueueGroup queueGroup)
+		public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] QueueGroup queueGroup)
 		{
 			if (id != queueGroup.Id)
 			{
@@ -135,12 +136,11 @@ namespace QueuePulse.Controllers
 			{
 				try
 				{
-					_context.Update(queueGroup);
-					await _context.SaveChangesAsync();
+					await _service.UpdateGroupAsync(queueGroup);
 				}
 				catch (DbUpdateConcurrencyException)
 				{
-					if (!QueueGroupExists(queueGroup.Id))
+					if (!await QueueGroupExists(queueGroup.Id))
 					{
 						return NotFound();
 					}
@@ -156,7 +156,7 @@ namespace QueuePulse.Controllers
 
 		public async Task<IActionResult> UpdateStatus(int id)
 		{
-			var queueGroup = await _context.QueueGroups.FindAsync(id);
+			var queueGroup = await _service.GetGroupsByIdAsync(id);
 
 			if (queueGroup != null)
 			{
@@ -170,8 +170,7 @@ namespace QueuePulse.Controllers
 					queueGroup.Status = StaticDetails.ContentStatus_Active;
 				}
 
-				_context.QueueGroups.Update(queueGroup);
-				await _context.SaveChangesAsync();
+				await _service.UpdateGroupAsync(queueGroup);
 
 				return Json(new { success = true, message = "Service status updated successfully." });
 
@@ -181,15 +180,15 @@ namespace QueuePulse.Controllers
 		}
 
 		// GET: QueueGroup/Delete/5
-		public async Task<IActionResult> Delete(int? id)
+		public async Task<IActionResult> Delete(int id)
 		{
-			if (id == null)
+			if (id == 0)
 			{
 				return NotFound();
 			}
 
-			var queueGroup = await _context.QueueGroups
-				.FirstOrDefaultAsync(m => m.Id == id);
+			var queueGroup = await _service.GetGroupsByIdAsync(id);
+
 			if (queueGroup == null)
 			{
 				return NotFound();
@@ -203,19 +202,18 @@ namespace QueuePulse.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteConfirmed(int id)
 		{
-			var queueGroup = await _context.QueueGroups.FindAsync(id);
+			var queueGroup = await  _service.GetGroupsByIdAsync(id);
 			if (queueGroup != null)
 			{
-				_context.QueueGroups.Remove(queueGroup);
+				await _service.DeleteGroupAsyncAsync(queueGroup);
 			}
 
-			await _context.SaveChangesAsync();
 			return RedirectToAction(nameof(Index));
 		}
 
-		private bool QueueGroupExists(int id)
+		private async Task<bool> QueueGroupExists(int id)
 		{
-			return _context.QueueGroups.Any(e => e.Id == id);
+			return await _service.isExistingGroupIdAsync(id);
 		}
 	}
 }
