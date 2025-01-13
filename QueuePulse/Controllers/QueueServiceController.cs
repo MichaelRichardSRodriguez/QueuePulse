@@ -231,7 +231,7 @@ namespace QueuePulse.Controllers
             return await _service.isExistingServiceIdAsync(id);
         }
 
-		public async Task<IActionResult> UpdateStatus(int id, string searchQuery = "", string statusFilter = "All")
+		public async Task<IActionResult> UpdateStatus(int id)
 		{
 			var department = await _service.GetServicesByIdAsync(id);
 			if (department != null)
@@ -248,14 +248,11 @@ namespace QueuePulse.Controllers
 
 				await _service.UpdateServiceAsync(department);
 
-				//TempData["success"] = "Department status updated successfully.";
-
-				return Json(new { success = true, message = "Department status updated successfully." });
-				//return Json(department);
+				return Json(new { success = true, message = "Service status updated successfully." });
 
 			}
 
-			return Json(new { success = false, message = "Department not found." });
+			return Json(new { success = false, message = "Service not found." });
 		}
 	}
 }

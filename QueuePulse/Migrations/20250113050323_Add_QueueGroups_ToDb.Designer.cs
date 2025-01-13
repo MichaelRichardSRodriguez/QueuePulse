@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QueuePulse.DataAccess.Data;
 
@@ -11,9 +12,11 @@ using QueuePulse.DataAccess.Data;
 namespace QueuePulse.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250113050323_Add_QueueGroups_ToDb")]
+    partial class Add_QueueGroups_ToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,7 +63,7 @@ namespace QueuePulse.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Departments", (string)null);
+                    b.ToTable("Departments");
 
                     b.HasData(
                         new
@@ -123,7 +126,7 @@ namespace QueuePulse.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("QueueGroups", (string)null);
+                    b.ToTable("QueueGroups");
                 });
 
             modelBuilder.Entity("QueuePulse.Models.QueueService", b =>
@@ -169,7 +172,7 @@ namespace QueuePulse.Migrations
 
                     b.HasIndex("Department_Id");
 
-                    b.ToTable("QueueServices", (string)null);
+                    b.ToTable("QueueServices");
                 });
 
             modelBuilder.Entity("QueuePulse.Models.QueueService", b =>

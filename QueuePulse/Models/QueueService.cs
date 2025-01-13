@@ -12,9 +12,11 @@ namespace QueuePulse.Models
         [DisplayName("Department")]
         [Required(ErrorMessage ="Department Name is required.")]
         public int Department_Id { get; set; }
-        [MinLength(5)]
+        [MinLength(5, ErrorMessage = "Should have atleast 5 characters.")]
+        [MaxLength(50, ErrorMessage = "Maximum of 50 characters only.")]
         public string Name { get; set; }
-        [MinLength(10)]
+        [MinLength(10, ErrorMessage = "Should have atleast 10 characters.")]
+        [MaxLength(200, ErrorMessage = "Maximum of 200 characters only.")]
         public string Description { get; set; }
         [DisplayName("Date Created")]
         public DateTime CreatedDate { get; set; }
@@ -27,7 +29,6 @@ namespace QueuePulse.Models
         public string? Status { get; set; }
 
         [ValidateNever]
-        //[JsonIgnore]
         public Department Department { get; set; }
 
     }

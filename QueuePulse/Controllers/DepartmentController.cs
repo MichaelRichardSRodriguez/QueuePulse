@@ -38,7 +38,7 @@ namespace QueuePulse.Controllers
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                departments = departments.Where(d => d.Name.Contains(searchQuery,StringComparison.OrdinalIgnoreCase) || d.Description.ToUpper().Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+                departments = departments.Where(d => d.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) || d.Description.ToUpper().Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
             }
 
             return Json(departments.ToList());
@@ -48,12 +48,12 @@ namespace QueuePulse.Controllers
         // GET: Department/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
 
-            var department = await _service.GetDepartmentByIdAsync(id); 
+            var department = await _service.GetDepartmentByIdAsync(id);
             if (department == null)
             {
                 return NotFound();
@@ -79,7 +79,7 @@ namespace QueuePulse.Controllers
             {
                 try
                 {
-                    if(!await _service.isExistingDepartmentName(department.Id,department.Name))
+                    if (!await _service.isExistingDepartmentName(department.Id, department.Name))
                     {
                         department.CreatedDate = DateTime.Now;
                         department.CreatedBy = "MIKE";
@@ -98,8 +98,8 @@ namespace QueuePulse.Controllers
                 catch (Exception ex)
                 {
 
-                     TempData["error"] = $"Saving failed. Error Encountered.\n {ex.Message}";
-                     //return BadRequest(ex);
+                    TempData["error"] = $"Saving failed. Error Encountered.\n {ex.Message}";
+                    //return BadRequest(ex);
                 }
 
             }
@@ -110,7 +110,7 @@ namespace QueuePulse.Controllers
         // GET: Department/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
@@ -184,7 +184,7 @@ namespace QueuePulse.Controllers
         // GET: Department/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
@@ -228,7 +228,7 @@ namespace QueuePulse.Controllers
         //// POST: Department/Delete/5
         //[HttpPost, ActionName("UpdateStatus")]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateStatus(int id, string searchQuery = "", string statusFilter = "All")
+        public async Task<IActionResult> UpdateStatus(int id)
         {
             var department = await _service.GetDepartmentByIdAsync(id);
             if (department != null)

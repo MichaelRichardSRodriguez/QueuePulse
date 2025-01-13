@@ -17,11 +17,12 @@ builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IDepartmentManagementService,DepartmentManagementService>();
 builder.Services.AddScoped<IServiceManagementService, ServiceManagementService>();
 
-// Handle circular references globally
+//Handle Circular Reference Globally
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-	options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
+
 
 var app = builder.Build();
 
@@ -45,3 +46,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
