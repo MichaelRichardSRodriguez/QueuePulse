@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using QueuePulse.Models;
+using QueuePulse.Models.Entities;
 using QueuePulse.Utility;
 using System.Reflection.Emit;
 

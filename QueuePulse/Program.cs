@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using QueuePulse.DataAccess.Data;
-using QueuePulse.DataAccess.Repositories.ConcreteRepo;
-using QueuePulse.DataAccess.Repositories.RepoInterfaces;
-using QueuePulse.DataAccess.Services.ConcreteServ;
-using QueuePulse.DataAccess.Services.ServInterfaces;
+using QueuePulse.DataAccess.Services;
+using QueuePulse.DataAccess.UnitOfWork;
 using QueuePulse.Models.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);

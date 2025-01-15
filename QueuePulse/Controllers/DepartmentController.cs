@@ -1,15 +1,17 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using QueuePulse.DataAccess.Services.ServInterfaces;
-using QueuePulse.Models;
+using QueuePulse.DataAccess.Services;
+using QueuePulse.Models.Entities;
+using QueuePulse.Models.ViewModels;
 using QueuePulse.Utility;
 
 namespace QueuePulse.Controllers
 {
+
     public class DepartmentController : Controller
     {
-        //private readonly ApplicationDbContext _context;
+
         private readonly IDepartmentManagementService _service;
 
         public DepartmentController(IDepartmentManagementService service) //ApplicationDbContext context)
@@ -19,7 +21,7 @@ namespace QueuePulse.Controllers
         }
 
         // GET: Department
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
 
             return View();
@@ -27,7 +29,7 @@ namespace QueuePulse.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetDepartments(string searchQuery = "", string statusFilter = "All")
+        public async Task<IActionResult> GetDepartments(string searchQuery = "", string statusFilter = "All", int recordPerPage = 10)// ,int pageNo = 1)
         {
             var departments = await _service.LoadDepartmentsAsync();
 
@@ -41,7 +43,49 @@ namespace QueuePulse.Controllers
                 departments = departments.Where(d => d.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) || d.Description.ToUpper().Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
             }
 
+            //For Pagination Codes
+            var recordCount = departments.Count();  //Record Count
+            var totalPages = (int)Math.Ceiling(recordCount / (double)recordPerPage); //Get Number of Pages
+
+            departments = departments.Take(recordPerPage);
+
+            ViewData["DepartmentPages"] = totalPages;
+            ViewData["DepartmentCount"] = recordCount;
+
             return Json(departments.ToList());
+
+
+            //         //*********************************************
+
+            //         DepartmentPaginatedVM departments = new()
+            //         {
+            //             Department = await _service.LoadDepartmentsAsync(),
+            //             CurrentPage = pageNo,
+            //             TotalPages = 0
+            //};
+
+
+            //if (statusFilter != "All")
+            //{
+            //	departments.Department = departments.Department.Where(d => d.Status.ToUpper() == statusFilter.ToUpper());
+            //}
+
+            //if (!string.IsNullOrEmpty(searchQuery))
+            //{
+            //	departments.Department = departments.Department.Where(d => d.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) || d.Description.ToUpper().Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
+            //}
+
+            ////For Pagination Codes
+            //var recordCount = departments.Department.Count();  //Record Count
+            //var totalPages = (int)Math.Ceiling(recordCount / (double)recordPerPage); //Get Number of Pages
+
+            //departments.Department = departments.Department.Take(recordPerPage);
+            //         departments.TotalPages = totalPages;
+            //         departments.CurrentPage = pageNo;
+
+
+            //return Json(departments);
+
         }
 
 
@@ -166,7 +210,7 @@ namespace QueuePulse.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await DepartmentExists(newDepartment.Id))
+                    if (!await _service.isExistingDepartmentId(id))
                     {
                         return NotFound();
                     }
@@ -253,12 +297,6 @@ namespace QueuePulse.Controllers
             }
 
             return Json(new { success = false, message = "Department not found." });
-        }
-
-        private async Task<bool> DepartmentExists(int id)
-        {
-
-            return await _service.isExistingDepartmentId(id);
         }
 
     }

@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QueuePulse.DataAccess.Data;
-using QueuePulse.DataAccess.Repositories.RepoInterfaces;
 using System.Linq.Expressions;
 
-namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
+namespace QueuePulse.DataAccess.Repositories
 {
-    public class Repository<T>: IRepository<T> where T : class
+    public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -36,21 +35,21 @@ namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
             //var queryObject = _dbSet.AsQueryable();
             IQueryable<T> queryObject = _dbSet;
 
-			if (!string.IsNullOrEmpty(includeProperties))
+            if (!string.IsNullOrEmpty(includeProperties))
             {
-                foreach (var property in includeProperties.Split(new[] {','},StringSplitOptions.RemoveEmptyEntries))
+                foreach (var property in includeProperties.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    queryObject =  queryObject.Include(property);
+                    queryObject = queryObject.Include(property);
                 }
 
             }
 
-			if (filter != null)
-			{
-				queryObject = queryObject.Where(filter);
-			}
+            if (filter != null)
+            {
+                queryObject = queryObject.Where(filter);
+            }
 
-			return  await queryObject.ToListAsync();
+            return await queryObject.ToListAsync();
         }
 
         public async Task<T> GetByIdAsync(int id, string? includeProperties = null)

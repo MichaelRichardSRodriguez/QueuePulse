@@ -16,6 +16,10 @@
         loadDepartments();
     });
 
+    //document.getElementById("recordPerPage").addEventListener("change", function () {
+    //    loadDepartments();
+    //});
+
 
     //document.getElementById("searchInput").addEventListener("keydown", function (event) {
 
@@ -34,18 +38,28 @@
 
     //});
 
-
-
     function loadDepartments() {
         const status = document.getElementById("statusFilter").value;
         const searchQuery = document.getElementById("searchInput").value;
+
+        //Pagination
+        const recordPerPageElement = document.getElementById("recordPerPage");
+        const pageNo = 1;
+
+        let recordPerPage;
+        if (recordPerPageElement) {
+            recordPerPage = recordPerPageElement.value
+        }
+        else {
+            recordPerPage = 10;
+        }
 
         // Show loading message or spinner if required
         const tableBody = document.querySelector("#departmentTable tbody");
         tableBody.innerHTML = "<tr><td colspan='4'>Loading...</td></tr>";
 
         // AJAX request to get data
-        fetch(`/Department/GetDepartments?searchQuery=${searchQuery}&statusFilter=${status}`)
+        fetch(`/department/GetDepartments?searchQuery=${searchQuery}&statusFilter=${status}&recordPerPage=${recordPerPage}`) //&pageNo=${pageNo}`)
             .then(response => response.json())
             .then(data => {
                 renderTable(data);
@@ -65,23 +79,6 @@
                 // Add any other headers if necessary (e.g., authorization tokens)
             },
         })
-            //.then(response => response.json())  // Assuming the response is JSON
-            //.then(data => {
-            //    //console.log('Success:', data);
-
-            //    toastr.success('Department status updated successfully.');
-
-            //    // Optionally, you can update the UI with the returned data or show a success message
-            //    loadDepartments();
-            //})
-            //.catch(error => {
-            //    //console.error('Error:', error);
-            //    // Handle any errors here
-
-            //    toastr.error('An error occured while updating the department status: ' + error);
-            //});
-
-
             .then(response => { 
                 if (!response.ok) {
                     throw new Error('Server responded with an error: ' + response.statusText);

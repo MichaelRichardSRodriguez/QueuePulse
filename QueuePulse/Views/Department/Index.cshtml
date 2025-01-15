@@ -1,7 +1,8 @@
-﻿@model IEnumerable<QueuePulse.Models.Department>
+﻿@model IEnumerable<Department>
 
 @{
 	ViewData["Title"] = "Department List";
+	var recordCount = ViewData["DepartmentCount"] as int? ?? 0;
 	var contentStatusStyle = string.Empty;
 }
 
@@ -35,12 +36,18 @@
 					<tr>
 						<th>
 							@Html.DisplayNameFor(model => model.Name)
+							<span class="fa fa-sort-up"></span>
+							@* <span class="fa fa-sort-down"></span> *@
 						</th>
 						<th>
 							@Html.DisplayNameFor(model => model.Description)
+							<span class="fa fa-sort-up"></span>
+							@* <span class="fa fa-sort-down"></span> *@
 						</th>
 						<th>
 							@Html.DisplayNameFor(model => model.Status)
+							<span class="fa fa-sort-up"></span>
+							@* <span class="fa fa-sort-down"></span> *@
 						</th>
 						<th></th>
 					</tr>
@@ -50,7 +57,73 @@
 				</tbody>
 			</table>
 		</div>
+
+@* 		<!-- Pagination -->
+
+		<div class="row">
+			<div class="d-flex ms-auto">
+				<div class="input-group">
+					@if (recordCount > 0)
+					{
+					<a class="btn btn-primary" href="#">&laquo;</a>
+					@for (int i = 0; i < recordCount; i++)
+					{
+						<a id="page@i" class="btn btn-primary">@i.ToString()</a>
+					}
+					<a class="btn btn-primary" href="#">&raquo;</a>
+
+					}
+
+					<div class="ms-auto">
+						<div class="input-group">
+							<label class="form-control border-0" style="background-color: transparent;width:95px;">Page Size:</label>
+							<select id="recordPerPage" class="form-select" style="width:70px;">
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="20">20</option>
+								<option value="25">25</option>
+								<option value="30">30</option>
+								<option value="35">35</option>
+								<option value="40">40</option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- End of Pagination --> *@
+
+		<!-- REVISED PAGINATION *****************-->
+		@* <div id="pagination">
+			<ul class="pagination">
+				@if (Model.CurrentPage > 1)
+				{
+					<li><a href="#" data-page="1">First</a></li>
+					<li><a href="#" data-page="@((Model.CurrentPage - 1))">Previous</a></li>
+				}
+
+				@for (int i = 1; i <= Model.TotalPages; i++)
+				{
+					<li class="@(i == Model.CurrentPage ? "active" : "")">
+						<a href="#" data-page="@i">@i</a>
+					</li>
+				}
+
+				@if (Model.CurrentPage < Model.TotalPages)
+				{
+					<li><a href="#" data-page="@((Model.CurrentPage + 1))">Next</a></li>
+					<li><a href="#" data-page="@Model.TotalPages">Last</a></li>
+				}
+			</ul>
+		</div> *@
+		<!--*************************************-->
+
+		
+
 	</div>
 </div>
 
+<!-- Javascript for handling Departments Index UI -->
 <script src="~/js/departmentsIndex.js"></script>
+

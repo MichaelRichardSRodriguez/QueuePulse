@@ -1,4 +1,4 @@
-﻿@model IEnumerable<QueuePulse.Models.QueueService>
+﻿@model IEnumerable<QueueService>
 
 @{
 	ViewData["Title"] = "Services List";
@@ -35,15 +35,23 @@
 					<tr>
 						<th>
 							@Html.DisplayNameFor(model => model.Name)
+							<span class="fa fa-sort-up"></span>
+							@* <span class="fa fa-sort-down"></span> *@
 						</th>
 						<th>
 							@Html.DisplayNameFor(model => model.Department)
+							<span class="fa fa-sort-up"></span>
+							@* <span class="fa fa-sort-down"></span> *@
 						</th>
 						<th>
 							@Html.DisplayNameFor(model => model.Description)
+							<span class="fa fa-sort-up"></span>
+							@* <span class="fa fa-sort-down"></span> *@
 						</th>
 						<th>
 							@Html.DisplayNameFor(model => model.Status)
+							<span class="fa fa-sort-up"></span>
+							@* <span class="fa fa-sort-down"></span> *@
 						</th>
 						<th></th>
 					</tr>
@@ -74,4 +82,5 @@
 	</div>
 </div>
 
+<!-- Javascript for handling Departments Index UI -->
 <script src="~/js/queueServicesIndex.js"></script>

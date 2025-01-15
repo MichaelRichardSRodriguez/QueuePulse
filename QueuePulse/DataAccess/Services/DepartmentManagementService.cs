@@ -1,9 +1,8 @@
-﻿using QueuePulse.DataAccess.Repositories.RepoInterfaces;
-using QueuePulse.DataAccess.Services.ServInterfaces;
-using QueuePulse.Models;
+﻿using QueuePulse.DataAccess.UnitOfWork;
+using QueuePulse.Models.Entities;
 using System.Linq.Expressions;
 
-namespace QueuePulse.DataAccess.Services.ConcreteServ
+namespace QueuePulse.DataAccess.Services
 {
     public class DepartmentManagementService : IDepartmentManagementService
     {
@@ -46,7 +45,7 @@ namespace QueuePulse.DataAccess.Services.ConcreteServ
 
             return await _unitOfWork.Department.GetAllAsync();
 
-		}
+        }
 
         public async Task<Department> GetDepartmentByIdAsync(int id)
         {

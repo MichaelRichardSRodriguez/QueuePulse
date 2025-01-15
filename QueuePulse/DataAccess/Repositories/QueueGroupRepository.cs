@@ -1,8 +1,7 @@
 ﻿using QueuePulse.DataAccess.Data;
-using QueuePulse.DataAccess.Repositories.RepoInterfaces;
-using QueuePulse.Models;
+using QueuePulse.Models.Entities;
 
-namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
+namespace QueuePulse.DataAccess.Repositories
 {
     public class QueueGroupRepository : Repository<QueueGroup>, IQueueGroupRepository
     {
@@ -15,7 +14,7 @@ namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
 
         public void UpdateGroup(QueueGroup queueGroup)
         {
-            throw new NotImplementedException();
+            _context.QueueGroups.Update(queueGroup);
         }
     }
 }

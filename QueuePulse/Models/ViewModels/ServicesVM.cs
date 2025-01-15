@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using QueuePulse.Models.Entities;
 
 namespace QueuePulse.Models.ViewModels
 {

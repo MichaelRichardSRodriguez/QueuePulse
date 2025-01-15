@@ -8,11 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using QueuePulse.DataAccess.Data;
-using QueuePulse.DataAccess.Repositories.RepoInterfaces;
-using QueuePulse.DataAccess.Services.ServInterfaces;
 using QueuePulse.Models;
 using QueuePulse.Models.ViewModels;
 using QueuePulse.Utility;
+using QueuePulse.DataAccess.Services;
 
 namespace QueuePulse.Controllers
 {
@@ -177,7 +176,7 @@ namespace QueuePulse.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!await QueueServiceExists(servicesVM.QueueService.Id))
+                    if (!await _service.isExistingServiceIdAsync(id))
                     {
                         return NotFound();
                     }
@@ -224,11 +223,6 @@ namespace QueuePulse.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-        }
-
-        private async Task<bool> QueueServiceExists(int id)
-        {
-            return await _service.isExistingServiceIdAsync(id);
         }
 
 		public async Task<IActionResult> UpdateStatus(int id)

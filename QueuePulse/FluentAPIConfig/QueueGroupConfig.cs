@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using QueuePulse.Models;
+using QueuePulse.Models.Entities;
 using QueuePulse.Utility;
 
 namespace QueuePulse.FluentAPIConfig
 {
-	public class QueueGroupConfig : IEntityTypeConfiguration<QueueGroup>
+    public class QueueGroupConfig : IEntityTypeConfiguration<QueueGroup>
 	{
 		public void Configure(EntityTypeBuilder<QueueGroup> builder)
 		{

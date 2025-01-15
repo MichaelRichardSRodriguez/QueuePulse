@@ -1,6 +1,8 @@
-﻿namespace QueuePulse.DataAccess.Repositories.RepoInterfaces
+﻿using QueuePulse.DataAccess.Repositories;
+
+namespace QueuePulse.DataAccess.UnitOfWork
 {
-    public interface IUnitOfWork: IDisposable
+    public interface IUnitOfWork : IDisposable
     {
         IDepartmentRepository Department { get; }
         IQueueServiceRepository QueueService { get; }

@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Protocol.Core.Types;
 using QueuePulse.DataAccess.Data;
-using QueuePulse.DataAccess.Services.ServInterfaces;
-using QueuePulse.Models;
+using QueuePulse.DataAccess.Services;
+using QueuePulse.Models.Entities;
 using QueuePulse.Utility;
 
 namespace QueuePulse.Controllers
 {
-	public class QueueGroupController : Controller
+    public class QueueGroupController : Controller
 	{
 		private readonly IQueueGroupService _service;
 
@@ -136,11 +136,23 @@ namespace QueuePulse.Controllers
 			{
 				try
 				{
-					await _service.UpdateGroupAsync(queueGroup);
+					var groupFromDb = await _service.GetGroupsByIdAsync(id);
+					if (groupFromDb == null)
+					{
+						return NotFound();
+					
+					}
+
+                    groupFromDb.Name = queueGroup.Name;
+					groupFromDb.Description = queueGroup.Description;
+					groupFromDb.UpdatedDate = DateTime.Now;
+					groupFromDb.UpdatedBy = "MIKE";
+
+					await _service.UpdateGroupAsync(groupFromDb);
 				}
 				catch (DbUpdateConcurrencyException)
 				{
-					if (!await QueueGroupExists(queueGroup.Id))
+					if (!await _service.isExistingGroupIdAsync(queueGroup.Id))
 					{
 						return NotFound();
 					}
@@ -211,9 +223,5 @@ namespace QueuePulse.Controllers
 			return RedirectToAction(nameof(Index));
 		}
 
-		private async Task<bool> QueueGroupExists(int id)
-		{
-			return await _service.isExistingGroupIdAsync(id);
-		}
 	}
 }

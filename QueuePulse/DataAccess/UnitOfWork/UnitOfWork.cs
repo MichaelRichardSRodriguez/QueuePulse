@@ -1,7 +1,7 @@
 ﻿using QueuePulse.DataAccess.Data;
-using QueuePulse.DataAccess.Repositories.RepoInterfaces;
+using QueuePulse.DataAccess.Repositories;
 
-namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
+namespace QueuePulse.DataAccess.UnitOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
@@ -15,13 +15,13 @@ namespace QueuePulse.DataAccess.Repositories.ConcreteRepo
         {
             _context = context;
             Department = new DepartmentRepository(_context);
-			QueueService = new QueueServiceRepository(_context);
+            QueueService = new QueueServiceRepository(_context);
             QueueGroup = new QueueGroupRepository(_context);
         }
 
         public async Task CompleteAsync()
         {
-            await  _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
 
         public void Dispose()

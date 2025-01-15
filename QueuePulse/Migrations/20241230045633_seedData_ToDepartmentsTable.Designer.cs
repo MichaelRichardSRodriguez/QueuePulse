@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QueuePulse.DataAccess.Data;
 
+
 #nullable disable
 
 namespace QueuePulse.Migrations

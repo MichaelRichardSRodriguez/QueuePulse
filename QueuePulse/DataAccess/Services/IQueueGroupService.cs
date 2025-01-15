@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using QueuePulse.Models;
+using QueuePulse.Models.Entities;
 using System.Linq.Expressions;
 
-namespace QueuePulse.DataAccess.Services.ServInterfaces
+namespace QueuePulse.DataAccess.Services
 {
     public interface IQueueGroupService
     {

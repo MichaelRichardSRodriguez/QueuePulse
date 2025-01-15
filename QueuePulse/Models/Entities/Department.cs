@@ -1,17 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace QueuePulse.Models
+namespace QueuePulse.Models.Entities
 {
-	public class QueueService
-	{
+    public class Department
+    {
         public int Id { get; set; }
-
-        [DisplayName("Department")]
-        [Required(ErrorMessage ="Department Name is required.")]
-        public int Department_Id { get; set; }
         [MinLength(5, ErrorMessage = "Should have atleast 5 characters.")]
         [MaxLength(50, ErrorMessage = "Maximum of 50 characters only.")]
         public string Name { get; set; }
@@ -26,10 +22,11 @@ namespace QueuePulse.Models
         public string? CreatedBy { get; set; }
         [DisplayName("Updated By")]
         public string? UpdatedBy { get; set; }
+
         public string? Status { get; set; }
 
         [ValidateNever]
-        public Department Department { get; set; }
+        public IEnumerable<QueueService> Services { get; set; }
 
     }
 }
