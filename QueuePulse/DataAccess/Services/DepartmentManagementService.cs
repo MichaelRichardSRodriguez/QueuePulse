@@ -1,4 +1,5 @@
 ﻿using QueuePulse.DataAccess.UnitOfWork;
+using QueuePulse.Models.DTO;
 using QueuePulse.Models.Entities;
 using System.Linq.Expressions;
 
@@ -13,16 +14,30 @@ namespace QueuePulse.DataAccess.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task CreateNewDepartmentAsync(Department department)
+        public async Task CreateNewDepartmentAsync(DepartmentDTO departmentDto)
         {
+            var department = new Department()
+            {
+                Id = departmentDto.Id,
+                Name = departmentDto.Name,
+                Description = departmentDto.Description,
+                CreatedDate = departmentDto.CreatedDate,
+                CreatedBy = departmentDto.CreatedBy
+            };
+
             await _unitOfWork.Department.CreateAsync(department);
             await _unitOfWork.CompleteAsync();
         }
 
-        public async Task DeleteDepartment(Department department)
+        public async Task DeleteDepartment(DepartmentDTO departmentDto)
         {
-            _unitOfWork.Department.DeleteRecord(department);
-            await _unitOfWork.CompleteAsync();
+            Department department = await _unitOfWork.Department.GetByIdAsync(departmentDto.Id);
+
+            if (department != null)
+            {
+                _unitOfWork.Department.DeleteRecord(department);
+                await _unitOfWork.CompleteAsync();
+            }
         }
 
         public async Task<bool> isExistingDepartmentId(int id)
@@ -40,22 +55,76 @@ namespace QueuePulse.DataAccess.Services
             return await _unitOfWork.Department.ExistsAsync(d => d.Id == id);
         }
 
-        public async Task<IEnumerable<Department>> LoadDepartmentsAsync()
+        public async Task<IEnumerable<DepartmentDTO>> LoadDepartmentsAsync()
         {
+            var department = await _unitOfWork.Department.GetAllAsync();
 
-            return await _unitOfWork.Department.GetAllAsync();
+            return department.Select(department => new DepartmentDTO
+            {
+                Id = department.Id,
+                Name = department.Name,
+                Description = department.Description,
+                Status = department.Status,
+                CreatedDate = department.CreatedDate,
+                UpdatedDate = department.UpdatedDate,
+                CreatedBy = department.CreatedBy,
+                UpdatedBy = department.UpdatedBy
+            }).ToList();
+
+            // return await _unitOfWork.Department.GetAllAsync();
 
         }
 
-        public async Task<Department> GetDepartmentByIdAsync(int id)
+        public async Task<DepartmentDTO> GetDepartmentByIdAsync(int id)
         {
-            return await _unitOfWork.Department.GetByIdAsync(id);
+            var department = await _unitOfWork.Department.GetByIdAsync(id);
+
+            var departmentDto = new DepartmentDTO
+            {
+                Id = department.Id,
+                Name = department.Name,
+                Description = department.Description,
+                Status = department.Status,
+                CreatedDate = department.CreatedDate,
+                UpdatedDate = department.UpdatedDate,
+                CreatedBy = department.CreatedBy,
+                UpdatedBy = department.UpdatedBy
+            };
+
+            //return department != null ? new DepartmentDTO
+            //{
+            //    Id = department.Id,
+            //    Name = department.Name,
+            //    Description = department.Description,
+            //    Status = department.Status,
+            //    CreatedDate = department.CreatedDate,
+            //    UpdatedDate = department.UpdatedDate,
+            //    CreatedBy = department.CreatedBy,
+            //    UpdatedBy = department.UpdatedBy
+            //} : null;
+
+            return departmentDto;
+
+            //return await _unitOfWork.Department.GetByIdAsync(id);
         }
 
-        public async Task UpdateDepartmentAsync(Department department)
+        public async Task UpdateDepartmentAsync(DepartmentDTO departmentDto)
         {
-            _unitOfWork.Department.UpdateDepartment(department);
-            await _unitOfWork.CompleteAsync();
+            var department = await _unitOfWork.Department.GetByIdAsync(departmentDto.Id);
+
+            if (department != null)
+            {
+
+                department.Name = departmentDto.Name;
+                department.Description = departmentDto.Description;
+                department.Status = departmentDto.Status;
+                department.UpdatedBy = departmentDto.UpdatedBy;
+                department.UpdatedDate = departmentDto.UpdatedDate;
+
+                _unitOfWork.Department.UpdateDepartment(department);
+                await _unitOfWork.CompleteAsync();
+            }
         }
+
     }
 }

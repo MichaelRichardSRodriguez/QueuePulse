@@ -25,12 +25,8 @@ namespace QueuePulse.Controllers
         }
 
         // GET: QueueService
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-
-            //var queueServices = await _service.GetAllServicesAsync();
-
-            //return View(queueServices);
 
             return View();
 		}
@@ -196,7 +192,7 @@ namespace QueuePulse.Controllers
         // GET: QueueService/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }

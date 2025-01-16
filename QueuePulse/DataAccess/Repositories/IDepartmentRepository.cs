@@ -7,7 +7,7 @@ namespace QueuePulse.DataAccess.Repositories
     {
 
         Task<IEnumerable<SelectListItem>> GetDepartmentListAsync();
-        void UpdateDepartment(Department department);
+        void UpdateDepartment(Department departmentDto);
 
     }
 }

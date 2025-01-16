@@ -3,6 +3,7 @@ using QueuePulse.DataAccess.Data;
 using QueuePulse.DataAccess.Services;
 using QueuePulse.DataAccess.UnitOfWork;
 using QueuePulse.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,13 @@ builder.Services.AddControllersWithViews();
 
 //Add Dbcontext
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("QueuePulseConnection")));
+builder.Services.AddRazorPages(); //Service To Allow the use of Razor Pages then Add the Mapping of Razor pages below
+
+//This logs-in you automatically once successfully registered
+builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
+//<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) //This Requires Confirmation and You Need to Login Manually
+
+
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IDepartmentManagementService,DepartmentManagementService>();
 builder.Services.AddScoped<IServiceManagementService, ServiceManagementService>();
@@ -37,9 +45,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication(); //To Check the Role of The User, Authentication First Before Authorization
 app.UseAuthorization();
-
+app.MapRazorPages(); //Map the Razor Pages
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QueuePulse.DataAccess.Services;
+using QueuePulse.Models.DTO;
 using QueuePulse.Models.Entities;
 using QueuePulse.Models.ViewModels;
 using QueuePulse.Utility;
@@ -16,7 +17,6 @@ namespace QueuePulse.Controllers
 
         public DepartmentController(IDepartmentManagementService service) //ApplicationDbContext context)
         {
-            //_context = context;
             _service = service;
         }
 
@@ -47,7 +47,7 @@ namespace QueuePulse.Controllers
             var recordCount = departments.Count();  //Record Count
             var totalPages = (int)Math.Ceiling(recordCount / (double)recordPerPage); //Get Number of Pages
 
-            departments = departments.Take(recordPerPage);
+            //departments = departments.Take(recordPerPage);
 
             ViewData["DepartmentPages"] = totalPages;
             ViewData["DepartmentCount"] = recordCount;
@@ -97,8 +97,21 @@ namespace QueuePulse.Controllers
                 return NotFound();
             }
 
-            var department = await _service.GetDepartmentByIdAsync(id);
-            if (department == null)
+            DepartmentDTO departmentDTO = await _service.GetDepartmentByIdAsync(id);
+
+            var department = new Department
+            {
+                Id = departmentDTO.Id,
+                Name = departmentDTO.Name,
+                Description = departmentDTO.Description,
+                Status = departmentDTO.Status,
+                CreatedDate = departmentDTO.CreatedDate,
+                CreatedBy = departmentDTO.CreatedBy,
+                UpdatedDate = departmentDTO.UpdatedDate,
+                UpdatedBy = departmentDTO.UpdatedBy
+            };
+
+            if (departmentDTO == null)
             {
                 return NotFound();
             }
@@ -117,18 +130,18 @@ namespace QueuePulse.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Department department)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] DepartmentDTO departmentDto)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (!await _service.isExistingDepartmentName(department.Id, department.Name))
+                    if (!await _service.isExistingDepartmentName(departmentDto.Id, departmentDto.Name))
                     {
-                        department.CreatedDate = DateTime.Now;
-                        department.CreatedBy = "MIKE";
+                        departmentDto.CreatedDate = DateTime.Now;
+                        departmentDto.CreatedBy = "MIKE";
 
-                        await _service.CreateNewDepartmentAsync(department);
+                        await _service.CreateNewDepartmentAsync(departmentDto);
 
                         TempData["success"] = "New department successfully created.";
 
@@ -148,7 +161,7 @@ namespace QueuePulse.Controllers
 
             }
 
-            return View(department);
+            return View(departmentDto);
         }
 
         // GET: Department/Edit/5
@@ -159,11 +172,19 @@ namespace QueuePulse.Controllers
                 return NotFound();
             }
 
-            var department = await _service.GetDepartmentByIdAsync(id); 
-            if (department == null)
+            var departmentDto = await _service.GetDepartmentByIdAsync(id); 
+            if (departmentDto == null)
             {
                 return NotFound();
             }
+
+            var department = new Department
+            {
+                Id = departmentDto.Id,
+                Name = departmentDto.Name,
+                Description = departmentDto.Description
+            };
+
             return View(department);
         }
 
@@ -174,6 +195,59 @@ namespace QueuePulse.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,  Department newDepartment) //[Bind("Id,Name,Description")] 
         {
+            //       if (id != newDepartment.Id)
+            //       {
+            //           return NotFound();
+            //       }
+
+            //       if (ModelState.IsValid)
+            //       {
+            //           try
+            //           {
+
+            //               if (await _service.isExistingDepartmentName(newDepartment.Id, newDepartment.Name))
+            //               {
+            //                   ModelState.AddModelError("Name", "Department Name already exists.");
+
+            //                   return View(newDepartment);
+            //               }
+
+            //               var departmentFromDb = await _service.GetDepartmentByIdAsync(id);  
+
+            //if (departmentFromDb == null)
+            //{
+            //	return NotFound();
+            //}
+
+            //               departmentFromDb.Name = newDepartment.Name;
+            //               departmentFromDb.Description = newDepartment.Description;
+            //               departmentFromDb.UpdatedDate = DateTime.Now;
+            //               departmentFromDb.UpdatedBy = "MIKE";
+
+            //               await _service.UpdateDepartmentAsync(departmentFromDb); 
+
+            //TempData["success"] = "Department updated successfully.";
+
+            //           }
+            //           catch (DbUpdateConcurrencyException)
+            //           {
+            //               if (!await _service.isExistingDepartmentId(id))
+            //               {
+            //                   return NotFound();
+            //               }
+            //               else
+            //               {
+            //                   throw;
+            //               }
+            //           }
+
+            //           return RedirectToAction(nameof(Index));
+            //       }
+
+            //       return View(newDepartment);
+
+            //-------------- REVISED Using DTO ----------------------
+
             if (id != newDepartment.Id)
             {
                 return NotFound();
@@ -191,21 +265,21 @@ namespace QueuePulse.Controllers
                         return View(newDepartment);
                     }
 
-                    var departmentFromDb = await _service.GetDepartmentByIdAsync(id);  
+                    var departmentDto = await _service.GetDepartmentByIdAsync(id);
 
-					if (departmentFromDb == null)
-					{
-						return NotFound();
-					}
+                    if (departmentDto == null)
+                    {
+                        return NotFound();
+                    }
 
-                    departmentFromDb.Name = newDepartment.Name;
-                    departmentFromDb.Description = newDepartment.Description;
-                    departmentFromDb.UpdatedDate = DateTime.Now;
-                    departmentFromDb.UpdatedBy = "MIKE";
+                    departmentDto.Name = newDepartment.Name;
+                    departmentDto.Description = newDepartment.Description;
+                    departmentDto.UpdatedDate = DateTime.Now;
+                    departmentDto.UpdatedBy = "MIKE";
 
-                    await _service.UpdateDepartmentAsync(departmentFromDb); 
+                    await _service.UpdateDepartmentAsync(departmentDto);
 
-					TempData["success"] = "Department updated successfully.";
+                    TempData["success"] = "Department updated successfully.";
 
                 }
                 catch (DbUpdateConcurrencyException)
@@ -222,6 +296,7 @@ namespace QueuePulse.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
+
             return View(newDepartment);
         }
 
@@ -233,9 +308,21 @@ namespace QueuePulse.Controllers
                 return NotFound();
             }
 
-            var department = await _service.GetDepartmentByIdAsync(id); 
+            var departmentDto = await _service.GetDepartmentByIdAsync(id);
 
-            if (department == null)
+            var department = new Department
+            {
+                Id = departmentDto.Id,
+                Name = departmentDto.Name,
+                Description = departmentDto.Description,
+                Status = departmentDto.Status,
+                CreatedBy = departmentDto.CreatedBy,
+                CreatedDate = departmentDto.CreatedDate,
+                UpdatedBy = departmentDto.UpdatedBy,
+                UpdatedDate = departmentDto.UpdatedDate
+            };
+
+            if (departmentDto == null)
             {
                 return NotFound();
             }
@@ -248,13 +335,13 @@ namespace QueuePulse.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var department = await _service.GetDepartmentByIdAsync(id);
+            var departmentDto = await _service.GetDepartmentByIdAsync(id);
 
-            if (department != null)
+            if (departmentDto != null)
             {
                 try
                 {
-                    await _service.DeleteDepartment(department);
+                    await _service.DeleteDepartment(departmentDto);
                     TempData["success"] = "Department deleted successfully.";
                 }
                 catch (DbUpdateException)
