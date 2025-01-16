@@ -15,7 +15,7 @@ namespace QueuePulse.FluentAPIConfig
 			builder.Property(d => d.Description).IsRequired()
 										.HasMaxLength(200);
 			builder.Property(d => d.Status).HasMaxLength(10)
-										.HasDefaultValue(StaticDetails.ContentStatus_Active);
+										.HasDefaultValue(StaticDetails.CONTENTSTATUS_ACTIVE);
 		}
 	}
 }

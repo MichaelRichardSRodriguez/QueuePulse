@@ -16,15 +16,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using QueuePulse.Models.Entities;
+using QueuePulse.Utility;
 
 namespace QueuePulse.Areas.Identity.Pages.Account
 {
     public class RegisterModel : PageModel
     {
         private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager; //For User Role Management
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
@@ -33,12 +36,14 @@ namespace QueuePulse.Areas.Identity.Pages.Account
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender)
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _userStore = userStore;
             _emailStore = GetEmailStore();
             _signInManager = signInManager;
@@ -98,11 +103,34 @@ namespace QueuePulse.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            //Add Role
+            public string? Role { get; set; }
+            //Add SelecListItem for Dropdown
+            public IEnumerable<SelectListItem> RoleList { get; set; }
         }
 
         //GET Handler
         public async Task OnGetAsync(string returnUrl = null)
         {
+
+            //Create a helper for ROLE
+            if (!await _roleManager.RoleExistsAsync(StaticDetails.ROLE_USER))
+            {
+                 await _roleManager.CreateAsync(new IdentityRole(StaticDetails.ROLE_USER));
+                 await _roleManager.CreateAsync(new IdentityRole(StaticDetails.ROLE_ADMIN));
+            }
+
+            //Populate RoleList
+            Input = new()
+            {
+                RoleList = _roleManager.Roles.Select(r => r.Name).Select(i => new SelectListItem
+                {
+                    Text = i,
+                    Value = i
+                })
+            };
+
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
@@ -123,6 +151,16 @@ namespace QueuePulse.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+
+                    if (!String.IsNullOrEmpty(Input.Role))
+                    {
+                        await _userManager.AddToRoleAsync(user, Input.Role);
+                    }
+                    else
+                    {
+                        await _userManager.AddToRoleAsync(user, StaticDetails.ROLE_USER);
+                    }
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

@@ -13,7 +13,7 @@ namespace QueuePulse.FluentAPIConfig
             builder.HasKey(d => d.Id);
             builder.Property(d => d.Name).IsRequired().HasMaxLength(50);
             builder.Property(d => d.Description).IsRequired().HasMaxLength(200);
-            builder.Property(d => d.Status).HasMaxLength(10).HasDefaultValue(StaticDetails.ContentStatus_Active);
+            builder.Property(d => d.Status).HasMaxLength(10).HasDefaultValue(StaticDetails.CONTENTSTATUS_ACTIVE);
 
             builder.HasData(
                 new Department
@@ -24,7 +24,7 @@ namespace QueuePulse.FluentAPIConfig
                     CreatedDate = new DateTime(2024, 12, 30, 13, 0, 0),
                     CreatedBy = "MIKE",
                     UpdatedBy = null,
-                    Status = StaticDetails.ContentStatus_Active
+                    Status = StaticDetails.CONTENTSTATUS_ACTIVE
                 },
                 new Department
                 {
@@ -34,7 +34,7 @@ namespace QueuePulse.FluentAPIConfig
                     CreatedDate = new DateTime(2024, 12, 30, 13, 0, 0),
                     CreatedBy = "MIKE",
                     UpdatedBy = null,
-                    Status = StaticDetails.ContentStatus_Active
+                    Status = StaticDetails.CONTENTSTATUS_ACTIVE
                 }
             );
         }

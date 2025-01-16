@@ -365,13 +365,13 @@ namespace QueuePulse.Controllers
             if (department != null)
             {
 
-                if (department.Status == StaticDetails.ContentStatus_Active)
+                if (department.Status == StaticDetails.CONTENTSTATUS_ACTIVE)
                 {
-                    department.Status = StaticDetails.ContentStatus_Inactive;
+                    department.Status = StaticDetails.CONTENTSTATUS_INACTIVE;
                 }
                 else
                 {
-                    department.Status = StaticDetails.ContentStatus_Active;
+                    department.Status = StaticDetails.CONTENTSTATUS_ACTIVE;
                 }
 
                 await _service.UpdateDepartmentAsync(department);

@@ -173,13 +173,13 @@ namespace QueuePulse.Controllers
 			if (queueGroup != null)
 			{
 
-				if (queueGroup.Status == StaticDetails.ContentStatus_Active)
+				if (queueGroup.Status == StaticDetails.CONTENTSTATUS_ACTIVE)
 				{
-					queueGroup.Status = StaticDetails.ContentStatus_Inactive;
+					queueGroup.Status = StaticDetails.CONTENTSTATUS_INACTIVE;
 				}
 				else
 				{
-					queueGroup.Status = StaticDetails.ContentStatus_Active;
+					queueGroup.Status = StaticDetails.CONTENTSTATUS_ACTIVE;
 				}
 
 				await _service.UpdateGroupAsync(queueGroup);

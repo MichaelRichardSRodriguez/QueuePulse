@@ -4,6 +4,8 @@ using QueuePulse.DataAccess.Services;
 using QueuePulse.DataAccess.UnitOfWork;
 using QueuePulse.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using QueuePulse.Utility;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +16,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("QueuePulseConnection")));
 builder.Services.AddRazorPages(); //Service To Allow the use of Razor Pages then Add the Mapping of Razor pages below
 
-//This logs-in you automatically once successfully registered
-builder.Services.AddDefaultIdentity<IdentityUser>().AddEntityFrameworkStores<ApplicationDbContext>();
+//This logs-in you automatically once successfully registered. IdentityRole is Added
+builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders(); //".AddDefaultIdentity<IdentityUser>" is the default value
 //<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) //This Requires Confirmation and You Need to Login Manually
 
 
@@ -23,6 +25,7 @@ builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IDepartmentManagementService,DepartmentManagementService>();
 builder.Services.AddScoped<IServiceManagementService, ServiceManagementService>();
 builder.Services.AddScoped<IQueueGroupService, QueueGroupService>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 
 //Handle Circular Reference Globally
 builder.Services.AddControllers().AddJsonOptions(options =>

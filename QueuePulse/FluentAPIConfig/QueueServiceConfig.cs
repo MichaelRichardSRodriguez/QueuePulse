@@ -18,7 +18,7 @@ namespace QueuePulse.FluentAPIConfig
 					.HasMaxLength(200);
 			builder.Property(d => d.Status)
 					.HasMaxLength(10)
-					.HasDefaultValue(StaticDetails.ContentStatus_Active);
+					.HasDefaultValue(StaticDetails.CONTENTSTATUS_ACTIVE);
 			builder.HasOne(x => x.Department)
 					.WithMany(x => x.Services)
 					.HasForeignKey(x => x.Department_Id)

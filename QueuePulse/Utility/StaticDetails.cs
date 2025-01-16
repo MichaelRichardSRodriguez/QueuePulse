@@ -2,10 +2,15 @@
 {
     public static class StaticDetails
     {
+        //For Record Status
+        public const string CONTENTSTATUS_ACTIVE = "Active";
+        public const string CONTENTSTATUS_INACTIVE = "Inactive";
 
-        public const string ContentStatus_Active = "Active";
-        public const string ContentStatus_Inactive = "Inactive";
+        //For User Role
 
+        public const string ROLE_USER = "User";
+        public const string ROLE_ADMIN = "Admin";
+        //public const string ROLE_ = "***";
 
     }
 }
