@@ -59,7 +59,7 @@
         tableBody.innerHTML = "<tr><td colspan='4'>Loading...</td></tr>";
 
         // AJAX request to get data
-        fetch(`/department/GetDepartments?searchQuery=${searchQuery}&statusFilter=${status}&recordPerPage=${recordPerPage}`) //&pageNo=${pageNo}`)
+        fetch(`/admin/department/getDepartments?searchQuery=${searchQuery}&statusFilter=${status}&recordPerPage=${recordPerPage}`) //&pageNo=${pageNo}`)
             .then(response => response.json())
             .then(data => {
                 renderTable(data);
@@ -71,7 +71,7 @@
     }
 
     function updateDepartmentStatus(itemId) {
-        fetch(`/department/UpdateStatus/${itemId}`, {
+        fetch(`/admin/department/UpdateStatus/${itemId}`, {
             method: 'GET', // or 'POST' depending on your API requirement // Use POST since you're updating data
             headers: {
                 'Content-Type': 'application/json', // Indicate the request body is JSON
@@ -164,9 +164,9 @@
             // Actions column
             const actionsCell = document.createElement("td");
             actionsCell.innerHTML = `
-                <a class="btn btn-warning btn-sm w-25 ${isActive ? '' : 'disabled'}" href="/department/Edit/${item.id}">Edit</a>
-                <a class="btn btn-primary btn-sm w-25" href="/department/Details/${item.id}">Details</a>
-                <a class="btn btn-danger btn-sm w-25" href="/department/Delete/${ item.id }">Delete</a>
+                <a class="btn btn-warning btn-sm w-25 ${isActive ? '' : 'disabled'}" href="/admin/department/Edit/${item.id}">Edit</a>
+                <a class="btn btn-primary btn-sm w-25" href="/admin/department/Details/${item.id}">Details</a>
+                <a class="btn btn-danger btn-sm w-25" href="/admin/department/Delete/${ item.id }">Delete</a>
             `;
 
             row.appendChild(actionsCell);

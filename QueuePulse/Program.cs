@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using QueuePulse.DataAccess.Data;
 using QueuePulse.DataAccess.Services;
@@ -17,7 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddRazorPages(); //Service To Allow the use of Razor Pages then Add the Mapping of Razor pages below
 
 //This logs-in you automatically once successfully registered. IdentityRole is Added
-builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders(); //".AddDefaultIdentity<IdentityUser>" is the default value
+builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders(); //.AddDefaultIdentity<IdentityUser>" is the default value
 //<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) //This Requires Confirmation and You Need to Login Manually
 
 
@@ -53,7 +54,7 @@ app.UseAuthorization();
 app.MapRazorPages(); //Map the Razor Pages
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area=Guest}/{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
 

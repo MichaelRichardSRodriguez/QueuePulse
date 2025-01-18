@@ -12,16 +12,19 @@ using QueuePulse.Models;
 using QueuePulse.Models.ViewModels;
 using QueuePulse.Utility;
 using QueuePulse.DataAccess.Services;
+using Microsoft.AspNetCore.Authorization;
 
-namespace QueuePulse.Controllers
+namespace QueuePulse.Areas.Admin.Controllers
 {
+    [Area("Admin")]
+    [Authorize(Roles = StaticDetails.ROLE_ADMIN)]
     public class QueueServiceController : Controller
     {
         private readonly IServiceManagementService _service;
 
         public QueueServiceController(IServiceManagementService service)
         {
-			_service = service;
+            _service = service;
         }
 
         // GET: QueueService
@@ -29,7 +32,7 @@ namespace QueuePulse.Controllers
         {
 
             return View();
-		}
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetServices(string searchQuery = "", string statusFilter = "All")
@@ -48,7 +51,7 @@ namespace QueuePulse.Controllers
                                                     || q.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase));
             }
 
-			return Json(queueServices);
+            return Json(queueServices);
         }
 
         // GET: QueueService/Details/5
@@ -65,7 +68,7 @@ namespace QueuePulse.Controllers
                 DepartmentList = await _service.GetDepartmentListAsync()
             };
 
-			if (queueService == null)
+            if (queueService == null)
             {
                 return NotFound();
             }
@@ -95,7 +98,7 @@ namespace QueuePulse.Controllers
             if (ModelState.IsValid)
             {
 
-                if (!await _service.isExistingServiceNameAsync(servicesVM.QueueService.Id,servicesVM.QueueService.Name))
+                if (!await _service.isExistingServiceNameAsync(servicesVM.QueueService.Id, servicesVM.QueueService.Name))
                 {
                     servicesVM.QueueService.CreatedDate = DateTime.Now;
                     servicesVM.QueueService.CreatedBy = "MIKE";
@@ -123,14 +126,14 @@ namespace QueuePulse.Controllers
                 return NotFound();
             }
 
-			var serviceVM = new ServicesVM()
-			{
-				QueueService = await _service.GetServicesByIdAsync(id),
-				DepartmentList = await _service.GetDepartmentListAsync()
-			};
+            var serviceVM = new ServicesVM()
+            {
+                QueueService = await _service.GetServicesByIdAsync(id),
+                DepartmentList = await _service.GetDepartmentListAsync()
+            };
 
 
-			if (serviceVM.QueueService == null)
+            if (serviceVM.QueueService == null)
             {
                 return NotFound();
             }
@@ -184,7 +187,7 @@ namespace QueuePulse.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            servicesVM.DepartmentList = await _service.GetDepartmentListAsync();  
+            servicesVM.DepartmentList = await _service.GetDepartmentListAsync();
 
             return View(servicesVM);
         }
@@ -221,28 +224,28 @@ namespace QueuePulse.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-		public async Task<IActionResult> UpdateStatus(int id)
-		{
-			var department = await _service.GetServicesByIdAsync(id);
-			if (department != null)
-			{
+        public async Task<IActionResult> UpdateStatus(int id)
+        {
+            var department = await _service.GetServicesByIdAsync(id);
+            if (department != null)
+            {
 
-				if (department.Status == StaticDetails.CONTENTSTATUS_ACTIVE)
-				{
-					department.Status = StaticDetails.CONTENTSTATUS_INACTIVE;
-				}
-				else
-				{
-					department.Status = StaticDetails.CONTENTSTATUS_ACTIVE;
-				}
+                if (department.Status == StaticDetails.CONTENTSTATUS_ACTIVE)
+                {
+                    department.Status = StaticDetails.CONTENTSTATUS_INACTIVE;
+                }
+                else
+                {
+                    department.Status = StaticDetails.CONTENTSTATUS_ACTIVE;
+                }
 
-				await _service.UpdateServiceAsync(department);
+                await _service.UpdateServiceAsync(department);
 
-				return Json(new { success = true, message = "Service status updated successfully." });
+                return Json(new { success = true, message = "Service status updated successfully." });
 
-			}
+            }
 
-			return Json(new { success = false, message = "Service not found." });
-		}
-	}
+            return Json(new { success = false, message = "Service not found." });
+        }
+    }
 }

@@ -3,9 +3,9 @@ using QueuePulse.DataAccess.Data;
 using QueuePulse.Models;
 using System.Diagnostics;
 
-namespace QueuePulse.Controllers
+namespace QueuePulse.Areas.Guest.Controllers
 {
-
+    [Area("Guest")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -25,40 +26,45 @@
 				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 					<ul class="navbar-nav flex-grow-1">
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+							<a class="nav-link text-dark" asp-area="Guest" asp-controller="Home" asp-action="Index">Home</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+							<a class="nav-link text-dark" asp-area="Guest" asp-controller="Home" asp-action="Privacy">Privacy</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Server</a>
+							<a class="nav-link text-dark" asp-area="Guest" asp-controller="Home" asp-action="Index">Server</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Workstation</a>
+							<a class="nav-link text-dark" asp-area="Guest" asp-controller="Home" asp-action="Index">Workstation</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Ticket</a>
+							<a class="nav-link text-dark" asp-area="Guest" asp-controller="Home" asp-action="Index">Ticket</a>
 						</li>
-						<li class="nav-item dropdown">
-							<a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">Content Management</a>
-							<ul class="dropdown-menu">
-								<li>
-									<a class="dropdown-item text-dark" asp-area="" asp-controller="QueueGroup" asp-action="Index">Queue Group</a>
-								</li>
-								<li class="nav-item">
-									<a class="dropdown-item text-dark" asp-area="" asp-controller="Department" asp-action="Index">Departments</a>
-								</li>
-								<li class="nav-item">
-									<a class="dropdown-item text-dark" asp-area="" asp-controller="QueueService" asp-action="Index">Services</a>
-								</li>
-							</ul>
-						</li>
+						<!-- CONTENT MANAGEMENT (ADMIN ONLY) -->
+						@if (User.IsInRole(StaticDetails.ROLE_ADMIN))
+						{
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">Content Management</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a class="dropdown-item text-dark" asp-area="Admin" asp-controller="QueueGroup" asp-action="Index">Queue Group</a>
+									</li>
+									<li class="nav-item">
+										<a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Department" asp-action="Index">Departments</a>
+									</li>
+									<li class="nav-item">
+										<a class="dropdown-item text-dark" asp-area="Admin" asp-controller="QueueService" asp-action="Index">Services</a>
+									</li>
+								</ul>
+							</li>
+						}
+
 					</ul>
 
 					<!-- Login and Register links on the right side -->
- 					<ul class="navbar-nav ms-auto">
-						<partial name = "_LoginPartial" />
-					</ul> 
+					<ul class="navbar-nav ms-auto">
+						<partial name="_LoginPartial" />
+					</ul>
 				</div>
 			</div>
 		</nav>

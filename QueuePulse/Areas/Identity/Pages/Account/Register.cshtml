@@ -28,10 +28,8 @@
                 </div>
                 <div class="form-floating mb-3">
                     <select asp-for="Input.Role" asp-items="@Model.Input.RoleList" class="form-select">
-                        <option selected disabled>-- Select Role --</option>
                     </select>
-                    <label asp-for="Input.Role">Role</label>
-                    <span asp-validation-for="Input.Role" class="text-danger"></span>
+                    <label asp-for="Input.Role">Select Role</label>
                 </div>
                 <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
             </form>

@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QueuePulse.DataAccess.Services;
@@ -7,9 +8,10 @@ using QueuePulse.Models.Entities;
 using QueuePulse.Models.ViewModels;
 using QueuePulse.Utility;
 
-namespace QueuePulse.Controllers
+namespace QueuePulse.Areas.Admin.Controllers
 {
-
+    [Area("Admin")]
+    [Authorize(Roles = StaticDetails.ROLE_ADMIN)]
     public class DepartmentController : Controller
     {
 
@@ -172,7 +174,7 @@ namespace QueuePulse.Controllers
                 return NotFound();
             }
 
-            var departmentDto = await _service.GetDepartmentByIdAsync(id); 
+            var departmentDto = await _service.GetDepartmentByIdAsync(id);
             if (departmentDto == null)
             {
                 return NotFound();
@@ -193,7 +195,7 @@ namespace QueuePulse.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,  Department newDepartment) //[Bind("Id,Name,Description")] 
+        public async Task<IActionResult> Edit(int id, Department newDepartment) //[Bind("Id,Name,Description")] 
         {
             //       if (id != newDepartment.Id)
             //       {
