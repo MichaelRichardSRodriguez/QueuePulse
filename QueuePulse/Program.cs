@@ -21,6 +21,12 @@ builder.Services.AddRazorPages(); //Service To Allow the use of Razor Pages then
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders(); //.AddDefaultIdentity<IdentityUser>" is the default value
 //<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true) //This Requires Confirmation and You Need to Login Manually
 
+//Overwrite Default Identity Configuration
+builder.Services.ConfigureApplicationCookie(options => {
+    options.LoginPath = $"/Identity/Account/Login";
+    options.LogoutPath = $"/Identity/Account/Logout";
+    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+});
 
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 builder.Services.AddScoped<IDepartmentManagementService,DepartmentManagementService>();

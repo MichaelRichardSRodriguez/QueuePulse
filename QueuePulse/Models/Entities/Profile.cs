@@ -1,19 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace QueuePulse.Models.Entities
 {
-    public class Department
+    public class Profile
     {
         public int Id { get; set; }
-        [MinLength(5, ErrorMessage = "Should have atleast 5 characters.")]
-        [MaxLength(50, ErrorMessage = "Maximum of 50 characters only.")]
+        [DisplayName("Department")]
+        public int DepartmentId { get; set; }
+
+        [DisplayName("Counter Name")]
+        [MinLength(1, ErrorMessage = "Should have atleast 5 characters.")]
+        [MaxLength(20, ErrorMessage = "Maximum of 50 characters only.")]
         public string Name { get; set; }
-        [MinLength(10, ErrorMessage = "Should have atleast 10 characters.")]
-        [MaxLength(200, ErrorMessage = "Maximum of 200 characters only.")]
-        public string Description { get; set; }
+
         [DisplayName("Date Created")]
         public DateTime CreatedDate { get; set; }
         [DisplayName("Date Updated")]
@@ -22,14 +24,11 @@ namespace QueuePulse.Models.Entities
         public string? CreatedBy { get; set; }
         [DisplayName("Updated By")]
         public string? UpdatedBy { get; set; }
-
         public string? Status { get; set; }
 
+        [ForeignKey("DepartmentId")]
         [ValidateNever]
-        public IEnumerable<QueueService> Services { get; set; }
-
-        [ValidateNever]
-        public IEnumerable<Profile> Profiles { get; set; }
+        public Department Department { get; set; }
 
     }
 }

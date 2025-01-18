@@ -38,7 +38,7 @@
 							<a class="nav-link text-dark" asp-area="Guest" asp-controller="Home" asp-action="Index">Workstation</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link text-dark" asp-area="Guest" asp-controller="Home" asp-action="Index">Ticket</a>
+							<a class="nav-link text-dark" asp-area="User" asp-controller="Ticket" asp-action="Index">Ticket</a>
 						</li>
 						<!-- CONTENT MANAGEMENT (ADMIN ONLY) -->
 						@if (User.IsInRole(StaticDetails.ROLE_ADMIN))
@@ -54,6 +54,9 @@
 									</li>
 									<li class="nav-item">
 										<a class="dropdown-item text-dark" asp-area="Admin" asp-controller="QueueService" asp-action="Index">Services</a>
+									</li>
+									<li class="nav-item">
+										<a class="dropdown-item text-dark" asp-area="Admin" asp-controller="Profile" asp-action="Index">Profiles</a>
 									</li>
 								</ul>
 							</li>

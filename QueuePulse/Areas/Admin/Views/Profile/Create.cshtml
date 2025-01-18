@@ -1,0 +1,39 @@
+﻿@model Profile
+
+@{
+    ViewData["Title"] = "Create Profile";
+}
+
+<div class="container col-md-5 mt-4">
+    <div class="row card p-3 border-top border-2 shadow rounded" style="background-color:azure;">
+        <h4><strong>Department Creation</strong></h4>
+        <hr />
+        <div class="card-body">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="DepartmentId" class="control-label"></label>
+                    <select asp-for="DepartmentId" class="form-select" asp-items="ViewBag.DepartmentId" autofocus>
+                        <option disabled selected>-- Select Department --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-2">
+                    <input type="submit" value="Create" class="btn btn-success" />
+                    <a asp-action="Index">Back to List</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

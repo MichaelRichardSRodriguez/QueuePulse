@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using QueuePulse.DataAccess.Data;
 
@@ -11,9 +12,11 @@ using QueuePulse.DataAccess.Data;
 namespace QueuePulse.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250118110304_Add_Tickets_ToDb")]
+    partial class Add_Tickets_ToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -292,47 +295,6 @@ namespace QueuePulse.Migrations
                         });
                 });
 
-            modelBuilder.Entity("QueuePulse.Models.Entities.Profile", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasDefaultValue("Active");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.ToTable("Profiles");
-                });
-
             modelBuilder.Entity("QueuePulse.Models.Entities.QueueGroup", b =>
                 {
                     b.Property<int>("Id")
@@ -441,15 +403,10 @@ namespace QueuePulse.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)")
-                        .HasDefaultValue("In Queue");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TicketNo")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -520,17 +477,6 @@ namespace QueuePulse.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("QueuePulse.Models.Entities.Profile", b =>
-                {
-                    b.HasOne("QueuePulse.Models.Entities.Department", "Department")
-                        .WithMany("Profiles")
-                        .HasForeignKey("DepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Department");
-                });
-
             modelBuilder.Entity("QueuePulse.Models.Entities.QueueService", b =>
                 {
                     b.HasOne("QueuePulse.Models.Entities.Department", "Department")
@@ -545,7 +491,7 @@ namespace QueuePulse.Migrations
             modelBuilder.Entity("QueuePulse.Models.Entities.Ticket", b =>
                 {
                     b.HasOne("QueuePulse.Models.Entities.QueueService", "QueueService")
-                        .WithMany("Ticket")
+                        .WithMany()
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -555,14 +501,7 @@ namespace QueuePulse.Migrations
 
             modelBuilder.Entity("QueuePulse.Models.Entities.Department", b =>
                 {
-                    b.Navigation("Profiles");
-
                     b.Navigation("Services");
-                });
-
-            modelBuilder.Entity("QueuePulse.Models.Entities.QueueService", b =>
-                {
-                    b.Navigation("Ticket");
                 });
 #pragma warning restore 612, 618
         }

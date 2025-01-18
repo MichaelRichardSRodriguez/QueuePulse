@@ -31,5 +31,8 @@ namespace QueuePulse.Models.Entities
         [ValidateNever]
         public Department Department { get; set; }
 
+        [ValidateNever]
+        public IEnumerable<Ticket> Ticket { get; set; }
+
     }
 }
