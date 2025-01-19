@@ -1,14 +1,9 @@
-﻿@model IEnumerable<QueuePulse.Models.Entities.Profile>
+﻿@model IEnumerable<Profile>
 
 @{
-    ViewData["Title"] = "Index";
-}
-
-
-@{
-    ViewData["Title"] = "Profile List";
-    var recordCount = ViewData["DepartmentCount"] as int? ?? 0;
-    var contentStatusStyle = string.Empty;
+	ViewData["Title"] = "Profile List";
+	var recordCount = ViewData["DepartmentCount"] as int? ?? 0;
+	var contentStatusStyle = string.Empty;
 }
 
 
@@ -38,45 +33,59 @@
 		</div>
 		<div class="card-body">
 			<table id="profileTable" class="table">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Name)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Department)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Status)
-                        </th>
+				<thead>
+					<tr>
+						<th>
+							@Html.DisplayNameFor(model => model.Name)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Department)
+						</th>
+						<th>
+							@Html.DisplayNameFor(model => model.Status)
+						</th>
 
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Data will be populated here dynamically using javascript -->
-                    @foreach (var item in Model)
-                    {
-                        <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Department.Name)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Status)
-                            </td>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- Data will be populated here dynamically using javascript -->
+					@foreach (var item in Model)
+					{
+						<tr>
+							<td>
+								@Html.DisplayFor(modelItem => item.Name)
+							</td>
+							<td>
+								@Html.DisplayFor(modelItem => item.Department.Name)
+							</td>
+							<td>
+								@if (item.Status == StaticDetails.CONTENTSTATUS_ACTIVE)
+								{
+									<a class="btn btn-success btn-sm" asp-action="UpdateStatus" asp-route-id="@item.Id">
+										@Html.DisplayFor(modelItem => item.Status)
+									</a>
+								}
+								else
+								{
+									<a class="btn btn-danger btn-sm" asp-action="UpdateStatus" asp-route-id="@item.Id">
+										@Html.DisplayFor(modelItem => item.Status)
+									</a>
+								}
+							</td>
 
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
+							<td>
+
+								<a class="btn btn-warning btn-sm" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+								<a class="btn btn-info btn-sm" asp-action="Details" asp-route-id="@item.Id">Details</a>
+								<a class="btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+							</td>
+						</tr>
+					}
+				</tbody>
 			</table>
 		</div>
 	</div>
 </div>
+
+
