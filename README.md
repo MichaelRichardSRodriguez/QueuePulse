@@ -1,5 +1,5 @@
 # QueuePulse (This is a sample README File / Not Final)
-A simple and efficient queuing system built using ASP.NET Core MVC and JavaScript. The system allows users to join a queue and monitor their position, ensuring smooth customer flow in scenarios like ticketing, service lines, or any queue management system.
+A simple and efficient queuing system built using ASP.NET Core MVC, C# and JavaScript. The system allows users to join a queue and monitor their position, ensuring smooth customer flow in scenarios like ticketing, service lines, or any queue management system.
 
 # Table of Contents
 # Prerequisites
