@@ -60,7 +60,7 @@ app.UseAuthorization();
 app.MapRazorPages(); //Map the Razor Pages
 app.MapControllerRoute(
     name: "default",
-    pattern: "{area=Guest}/{controller=Home}/{action=Index}/{id?}");
+    pattern: "{area=Guest}/{controller=Dashboard}/{action=Index}/{id?}");
 
 app.Run();
 

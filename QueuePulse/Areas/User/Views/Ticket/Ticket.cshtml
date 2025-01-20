@@ -1,0 +1,202 @@
+﻿@* @model IEnumerable<QueueService>
+
+@{
+    ViewBag.Title = "Generate Ticket";
+}
+
+<form method="post" action="@Url.Action("AddQueue", "Queue")">
+    <div class="row d-flex flex-fill justify-content-center">
+        <h3 class="row justify-content-center mt-4">Services Offered</h3>
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 col-sm-6 mt-4">
+                <div class="card service-card" data-service-id="@item.Id">
+                    <input type="radio" id="service_@item.Id" name="serviceId" value="@item.Id" required style="display:none;" />
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text" style="font-size: 0.9em; color: #555;">@item.Description</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="d-flex flex-fill justify-content-center mt-4">
+        <button type="submit" class="btn btn-primary generate-ticket-btn" style="width:250px; height:80px">Generate Ticket</button>
+    </div>
+
+</form>
+
+<style>
+    .service-card {
+        cursor: pointer;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        transition: transform 0.3s ease, background-color 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+        .service-card:hover {
+            transform: scale(1.05);
+            background-color: #eef2f5;
+        }
+
+        .service-card.selected {
+            border-color: #007bff;
+            background-color: #e1f3ff;
+        }
+
+        .service-card .card-title {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .service-card .card-text {
+            font-size: 0.9em;
+            color: #555;
+        }
+
+    /* Ensure radio button is hidden but still functional */
+    input[type="radio"] {
+        display: none;
+    }
+
+    /* Add a focus outline to help with accessibility */
+    .service-card:focus {
+        outline: 2px solid #007bff;
+    }
+
+
+    .generate-ticket-btn {
+        font-size: 1.2em;
+        font-weight: bold;
+        background: linear-gradient(145deg, #4e73df, #2e59d9);
+        border: none;
+        border-radius: 50px;
+        color: #fff;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .generate-ticket-btn i {
+            margin-right: 10px;
+        }
+
+        .generate-ticket-btn:hover {
+            background: linear-gradient(145deg, #2e59d9, #4e73df);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transform: scale(1.05);
+        }
+
+        .generate-ticket-btn:active {
+            background: linear-gradient(145deg, #2e59d9, #4e73df);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        .generate-ticket-btn:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(72, 130, 242, 0.6);
+        }
+
+</style>
+
+<script>
+
+    // JavaScript to handle card selection
+    document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('click', function () {
+            // Deselect all cards
+            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+
+            // Select the clicked card
+            this.classList.add('selected');
+
+            // Check the radio button for the selected card
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+            }
+        });
+    });
+</script> *@
+
+
+<!-- REVISED -->
+@model IEnumerable<QueueService>
+
+@{
+    ViewBag.Title = "Generate Ticket";
+}
+
+<form method="post" action="@Url.Action("AddQueue", "Ticket", new {area = "User"})">
+    <div class="row d-flex flex-fill justify-content-center">
+        <h3 class="row justify-content-center mt-4">Services Offered</h3>
+        @foreach (var item in Model)
+        {
+            <div class="col-md-3 col-sm-6 mt-4">
+                <div class="card service-card" data-service-id="@item.Id" tabindex="0">
+                    <input type="radio" id="service_@item.Id" name="serviceId" value="@item.Id" required style="display:none;" />
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@item.Name</h5>
+                        <p class="card-text" style="font-size: 0.9em; color: #555;">@item.Description</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="d-flex flex-fill justify-content-center mt-4">
+        <button id="btnGenerateTicket" type="submit" class="btn btn-primary generate-ticket-btn" style="width:250px; height:80px">Generate Ticket</button>
+    </div>
+</form>
+
+<script>
+    document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('click', function () {
+            // Deselect all cards
+            document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+
+            // Select the clicked card
+            this.classList.add('selected');
+
+            // Check the radio button for the selected card
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+            }
+
+            // Optional: Show a confirmation message
+            const serviceName = this.querySelector('.card-title').textContent;
+
+            //alert(`You selected: ${serviceName}`); //For checking only
+        });
+
+        // Allow selection via keyboard (Enter/Space key)
+        card.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' || event.key === ' ') {
+                this.click();
+            }
+        });
+    });
+
+
+    // Event listener for the button click
+    document.getElementById('btnGenerateTicket').addEventListener('click', function (e) {
+        // Optional: Prevent form submission if it's a form button
+        e.preventDefault();
+
+        // Display SweetAlert
+        Swal.fire({
+            //position: "top-end",
+            icon: "success",
+            title: "Your ticket has been created.",
+            showConfirmButton: false,
+            timer: 1500
+        });
+    });
+</script>

@@ -3,6 +3,8 @@ body {
     background-color: beige;
 }
 
+/* LOGIN CSS */
+
 .login-container {
     width: 100%;
     max-width: 400px;
@@ -117,3 +119,93 @@ input {
         .sign-up-link a:hover {
             text-decoration: underline;
         }
+
+
+/* TICKET CSS */
+
+.service-card {
+    cursor: pointer;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    outline: none;
+}
+
+    .service-card:hover {
+        transform: scale(1.05);
+        background-color: #eef2f5;
+    }
+
+    .service-card.selected {
+        border-color: #007bff;
+        background-color: #e1f3ff;
+        box-shadow: 0 6px 12px rgba(0, 123, 255, 0.3);
+    }
+
+    .service-card .card-title {
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+
+    .service-card .card-text {
+        font-size: 0.9em;
+        color: #555;
+    }
+
+/* Ensure radio button is hidden but still functional */
+input[type="radio"] {
+    display: none;
+}
+
+/* Focus outline for accessibility */
+.service-card:focus {
+    outline: 2px solid #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.generate-ticket-btn {
+    font-size: 1.2em;
+    font-weight: bold;
+    background: linear-gradient(145deg, #4e73df, #2e59d9);
+    border: none;
+    border-radius: 50px;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .generate-ticket-btn i {
+        margin-right: 10px;
+    }
+
+    .generate-ticket-btn:hover {
+        background: linear-gradient(145deg, #2e59d9, #4e73df);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        transform: scale(1.05);
+    }
+
+    .generate-ticket-btn:active {
+        background: linear-gradient(145deg, #2e59d9, #4e73df);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: scale(1.02);
+    }
+
+    .generate-ticket-btn:focus {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(72, 130, 242, 0.6);
+    }
+
+/* Mobile responsiveness */
+@media (max-width: 767px) {
+    .service-card {
+        flex: 1 0 100%;
+        margin-bottom: 10px;
+    }
+}

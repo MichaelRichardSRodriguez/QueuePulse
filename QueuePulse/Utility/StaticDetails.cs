@@ -13,8 +13,8 @@
 
 
         //For Queuing Status
-        public const string QUEUE_INQUEUE = "In Queue";
-        public const string QUEUE_PROCESSING = "Processing";
+        public const string QUEUE_NEW = "New";
+        public const string QUEUE_INPROGRESS = "In Progress";
         public const string QUEUE_COMPLETED = "Completed";
         //public const string ROLE_ = "***";
 

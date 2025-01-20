@@ -12,7 +12,7 @@ namespace QueuePulse.FluentAPIConfig
         {
             builder.HasKey(t => t.Id);
             builder.Property(t => t.TicketNo).IsRequired().HasMaxLength(10);
-            builder.Property(t => t.Status).HasMaxLength(10).HasDefaultValue(StaticDetails.QUEUE_INQUEUE);
+            builder.Property(t => t.Status).HasMaxLength(20).HasDefaultValue(StaticDetails.QUEUE_NEW);
             builder.HasOne(s => s.QueueService).WithMany(t => t.Ticket).HasForeignKey(t => t.ServiceId);
 
         }

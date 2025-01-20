@@ -1,0 +1,144 @@
+﻿@model DashboardVM
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>Dashboard</h2>
+
+<!-- Department Overview Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Departments Overview</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Department Name</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Created By</th>
+                    <th>Created Date</th>
+                    <th>Updated Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var department in Model.Departments)
+                {
+                    <tr>
+                        <td>@department.Id</td>
+                        <td>@department.Name</td>
+                        <td>@department.Description</td>
+                        <td>@department.Status</td>
+                        <td>@department.CreatedBy</td>
+                        <td>@department.CreatedDate.ToString("MM/dd/yyyy")</td>
+                        <td>@department.UpdatedDate.ToString("MM/dd/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Queue Service Overview Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Queue Services</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Service Name</th>
+                    <th>Department</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Created Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var service in Model.QueueServices)
+                {
+                    <tr>
+                        <td>@service.Id</td>
+                        <td>@service.Name</td>
+                        <td>@service.Department?.Name</td>
+                        <td>@service.Description</td>
+                        <td>
+                            @if (service.Status == StaticDetails.CONTENTSTATUS_ACTIVE)
+                            {
+                                <span class="badge rounded-pill bg-success">
+                                    @service.Status
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge rounded-pill bg-danger">
+                                    @service.Status
+                                </span>
+                            }
+                            </td>
+                        <td>@service.CreatedDate.ToString("MM/dd/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Ticket Statistics Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4>Ticket Statistics</h4>
+    </div>
+    <div class="card-body">
+        <canvas id="ticketStatusChart" width="1000" height="200"></canvas>
+    </div>
+</div>
+
+<!-- Add Chart.js Script -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for the chart
+    var ticketStats = @Html.Raw(Json.Serialize(Model.TicketStats));
+
+
+    // alert('New: ' + ticketStats.new);
+    // alert('In Progress: ' + ticketStats.InProgress);
+    // alert('Completed: ' + ticketStats.Completed);
+
+    var ctx = document.getElementById('ticketStatusChart').getContext('2d');
+    var ticketChart = new Chart(ctx, {
+        type: 'bar', // Bar chart
+        data: {
+            labels: ['New', 'In Progress', 'Completed'], // Labels for each ticket status
+            datasets: [{
+                label: 'Ticket Status',
+                data: [
+                    ticketStats.new, 
+                    ticketStats.inProgress, 
+                    ticketStats.completed
+                ], // Ticket counts
+                backgroundColor: ['#007bff', '#ffcc00', '#28a745'], // Bar colors
+                borderColor: ['#0056b3', '#e6b800', '#218838'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,  // This keeps the y-axis starting at 0
+                    min: 1,             // This sets the minimum value to 1, not 0.5
+                    ticks: {
+                        stepSize: 1     // Ensures the ticks increment by 1 (no decimals)
+                    }
+                }
+            }
+        }
+    });
+</script>
