@@ -11,11 +11,11 @@ namespace QueuePulse.Areas.User.Controllers
     [Area("User")]
     [Authorize]
 
-    public class TicketController : Controller
+    public class QueueController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public TicketController(ApplicationDbContext context)
+        public QueueController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -25,6 +25,7 @@ namespace QueuePulse.Areas.User.Controllers
             return View(ticket);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Ticket()
         {
 
@@ -45,9 +46,9 @@ namespace QueuePulse.Areas.User.Controllers
                 var queue = await _context.Tickets.AsNoTracking()
                             .Where(q => q.ServiceId == serviceId)
                             .CountAsync() + 1;
-                var prefix = "S"; // await _context.ServiceCategories.AsNoTracking()
-                //            .Where(q => q.Id == serviceId).Select(s => s.Prefix)
-                //            .FirstOrDefaultAsync();
+                var prefix = await _context.QueueServices.AsNoTracking()
+                            .Where(q => q.Id == serviceId).Select(s => s.Prefix)
+                            .FirstOrDefaultAsync();
 
                 newTicket.TicketNo = prefix + queue.ToString("000");
 
@@ -67,5 +68,13 @@ namespace QueuePulse.Areas.User.Controllers
             //return View(queueItem);
             return RedirectToAction(nameof(Ticket));
         }
-    }
+
+		public async Task<IActionResult> ManageQueue()
+		{
+
+			var ticketsVM = await _context.Tickets.ToListAsync();
+
+			return View(ticketsVM);
+		}
+	}
 }

@@ -60,9 +60,9 @@
                 </dd>
             </dl>
             <div>
-                <a class="btn btn-warning @disabledEdit" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
-                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model?.Id">Delete</a>
-                <a asp-action="Index">Back to List</a>
+                <a class="btn btn-warning w-25 @disabledEdit" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+                <a class="btn btn-danger w-25" asp-action="Delete" asp-route-id="@Model?.Id">Delete</a>
+                <a asp-action="Index" class="btn btn-secondary w-25">Back to List</a>
             </div>
         </div>
     </div>

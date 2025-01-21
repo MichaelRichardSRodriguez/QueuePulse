@@ -23,13 +23,18 @@
                     <span asp-validation-for="QueueService.Name" class="text-danger"></span>
                 </div>
                 <div class="form-group">
+                    <label asp-for="QueueService.Prefix" class="control-label"></label>
+                    <input type="text" asp-for="QueueService.Prefix" class="form-control" />
+                    <span asp-validation-for="QueueService.Prefix" class="text-danger"></span>
+                </div>
+                <div class="form-group">
                     <label asp-for="QueueService.Description" class="control-label"></label>
-                    <input asp-for="QueueService.Description" class="form-control" />
+                    <textarea asp-for="QueueService.Description" class="form-control" style="height:120px;"></textarea>
                     <span asp-validation-for="QueueService.Description" class="text-danger"></span>
                 </div>
 				<div class="form-group mt-2">
-					<input type="submit" value="Save" class="btn btn-success" />
-					<a asp-action="Index">Back to List</a>
+                    <button type="submit" class="btn btn-success w-25">Save</button>
+                    <a asp-action="Index" class="btn btn-secondary w-25">Back to List</a>
 				</div>
 			</form>
 		</div>

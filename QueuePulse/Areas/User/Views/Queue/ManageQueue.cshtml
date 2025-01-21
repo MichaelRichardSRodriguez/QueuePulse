@@ -1,0 +1,345 @@
+﻿@model IEnumerable<Ticket>
+@{
+	//Layout = "_Layout";
+	var statusStyle = string.Empty;
+}
+<style>
+	.myQueueList {
+		height: 300px; /* Set the height of the div */
+		background-color: lightblue; /* Optional, just to see the div */
+		border: 1px solid black; /* Optional, to see the borders of the div */
+	}
+
+	.myCurrentQueue {
+		height: 450px; /* Set the height of the div */
+		/* 		background-color: lightblue; /* Optional, just to see the div */
+	}
+
+	.myCurrentQueue-sub {
+		height: 130px; /* Set the height of the div */
+		/* 		background-color: lightblue; /* Optional, just to see the div */
+	}
+
+	.rounded-border-div {
+		height: 150px; /* Set the height of the div */
+		/* min-width: 300px; /* Set the width of the div */
+		border: 3px solid #F29F58; /* Yellow border */
+		border-radius: 20px; /* Rounded corners */
+		padding: 20px; /* Optional padding inside the div */
+		/* background-color: lightgray; */ /* Optional background color to make it stand out */
+	}
+
+	.timer-container {
+		text-align: center;
+		background-color: white;
+		padding: 10px;
+		border-radius: 10px;
+		box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+		width: 350px;
+	}
+
+	#timeDisplay {
+		font-size: 4em;
+		font-weight: bold;
+		color: #0A5EB0; /* #333; */
+		margin-bottom: 20px;
+		padding: 10px;
+		border-radius: 5px;
+		/* background-color: #f0f0f0; */
+		min-width: 200px;
+		text-align: center;
+	}
+
+
+
+	/*88888888888888888888888888*/
+
+	.queue-card {
+		border: 1px solid #ddd;
+		border-radius: 8px;
+		padding: 15px;
+		margin-bottom: 20px;
+		box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+	}
+
+		.queue-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+		}
+
+	.queue-header {
+		font-size: 18px;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+
+	.queue-date {
+		font-size: 14px;
+		color: #555;
+		margin-bottom: 10px;
+	}
+
+	.queue-status {
+		font-size: 14px;
+		font-weight: bold;
+	}
+
+	/* Status color indicators */
+	.status-new {
+		color: #FF885B; /* Yellow for pending */
+	}
+
+	.status-in-progress {
+		color: #1E90FF; /* Blue for in-progress */
+	}
+
+	.status-completed {
+		color: #117554; /* Green for completed */
+	}
+
+	.status-cancelled {
+		color: #e74c3c; /* Red for cancelled */
+	}
+
+	/* For better responsive grid layout */
+	.queue-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		gap: 20px;
+	}
+
+	.fixed-height-container {
+		height: 730px; /* Set your fixed height here */
+		overflow-y: auto; /* Adds vertical scrollbar if content exceeds the height */
+		padding: 2px; /* Optional, for better spacing */
+		/* border: 1px solid #ccc;  */ /* Optional, for border around the container */
+		/* background-color: #f9f9f9; */ /* Optional, background color */
+		overflow-x: hidden;
+	}
+
+		/* Style the scrollbar itself */
+		.fixed-height-container::-webkit-scrollbar {
+			width: 8px; /* Width of the vertical scrollbar */
+		}
+
+		/* Transparent scrollbar track */
+		.fixed-height-container::-webkit-scrollbar-track {
+			background-color: transparent; /* Transparent background for the scrollbar track */
+		}
+
+		/* Style the draggable scrollbar thumb */
+		.fixed-height-container::-webkit-scrollbar-thumb {
+			background-color: #888; /* Thumb color */
+			border-radius: 10px; /* Optional rounded corners for the thumb */
+		}
+
+			/* On hover, make the thumb darker */
+			.fixed-height-container::-webkit-scrollbar-thumb:hover {
+				background-color: #555;
+			}
+
+</style>
+<div class="container mt-2">
+	<div class="row">
+		<!-- ********** Current Queue Section ********* -->
+		<div class="col-6 mt-1">
+			<div class="card mb-1 myCurrentQueue">
+				<h4 class="card-header bg-primary text-white d-flex flex-column justify-content-center align-items-center">Current Serving</h4>
+				<div class="card-body">
+					<div class="d-flex flex-column align-items-center">
+						<input type="hidden" id="queueItemId" />
+					</div>
+					<div class="d-flex flex-column justify-content-center align-items-center mt-4">
+						<div class="rounded-border-div d-flex flex-column justify-content-center align-items-center">
+							<h1 id="queueItemNameLabel" style="font-size: 110px; color: #F26B0F"><strong>....</strong></h1>
+						</div>
+					</div>
+					<div class="d-flex flex-column justify-content-center align-items-center">
+						<h4 class="mt-4"><strong>Serving Time</strong></h4>
+						<div>
+							@*  class="timer-container"> *@
+							<div id="timeDisplay">00:00:00</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="card myCurrentQueue-sub mt-2">
+				<h5 class="card-header bg-primary text-white d-flex flex-column justify-content-center align-items-center">Your Served Tickets</h5>
+				<div class="card-body">
+					<div class="d-flex flex-column justify-content-center align-items-center">
+						<h1 id="queueItemNameLabel" style="font-size: 40px; color: #F26B0F"><strong>10</strong></h1>
+					</div>
+				</div>
+			</div>
+			<div class="card myCurrentQueue-sub mt-2">
+				<h5 class="card-header bg-primary text-white d-flex flex-column justify-content-center align-items-center">Performance</h5>
+				<div class="card-body">
+					<div class="d-flex flex-column justify-content-center align-items-center">
+						<h1 id="queueItemNameLabel" style="font-size: 40px; color: #F26B0F"><strong>Excellent</strong></h1>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ********** Controls Section ********* -->
+		<div class="col-3 mt-1">
+			<div class="card mb-1">
+				<h4 class="card-header bg-primary text-white d-flex flex-column justify-content-center align-items-center">Terminal Number</h4>
+				<div class="card-body">
+					<div class="d-flex flex-column">
+
+						<a id="nextqueueButton" class="btn btn-info mb-1">
+							Next
+						</a>
+						<a id="recallButton" class="btn btn-outlined-info mb-1 disabled">Recall</a>
+						<a id="processedButton" class="btn btn-outlined-info mb-1 disabled">Processed</a>
+						<a id="transferButton" class="btn btn-outlined-info mb-1 disabled">Transfer</a>
+						<a id="referButton" class="btn btn-outlined-info mb-1 disabled">Refer</a>
+						<a id="statusButton" class="btn btn-success mb-1">Online</a>
+						<a id="closeButton" class="btn btn-info mb-1" asp-controller="Home" asp-action="Index">Close</a>
+
+					</div>
+				</div>
+			</div>
+			<div class="mt-2 mb-2">
+				<h6 class="card-subtitle mb-2 text-muted">Process Description</h6>
+			</div>
+			<div class="accordion" id="accordionExample">
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingOne">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+							Next
+						</button>
+					</h2>
+					<div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample" style="">
+						<div class="accordion-body">
+							Get the Next Queue. Updates the current queue status to "IN PROGRESS". You can TRANSFER or REFER the current queue.
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingTwo">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+							Completed
+						</button>
+					</h2>
+					<div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample" style="">
+						<div class="accordion-body">
+							Finalize the current queue. Updates the current queue status to "COMPLETED".
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingThree">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+							Transfer
+						</button>
+					</h2>
+					<div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample" style="">
+						<div class="accordion-body">
+							You can transfer current queue to other workstation available.
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingFour">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseThree">
+							Refer
+						</button>
+					</h2>
+					<div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionExample" style="">
+						<div class="accordion-body">
+							You can transfer current queue to other sections available.
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingFive">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseThree">
+							Offline / Online
+						</button>
+					</h2>
+					<div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#accordionExample" style="">
+						<div class="accordion-body">
+							Change workstation from OFFLINE to ONLINE and vice versa. You can't proceed to OFFLINE if there's a pending queue.
+						</div>
+					</div>
+				</div>
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="headingSix">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseThree">
+							Recall
+						</button>
+					</h2>
+					<div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#accordionExample" style="">
+						<div class="accordion-body">
+							Call the current queue again.
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- ********** Queue List Status ********* -->
+		<div class="col-3 mt-1">
+			<div id="queueCards" class="fixed-height-container">
+				@foreach (var item in Model)
+				{
+
+					@if (item.Status == StaticDetails.QUEUE_NEW)
+					{
+						statusStyle = "status-new";
+					}
+					else if (item.Status == StaticDetails.QUEUE_INPROGRESS)
+					{
+						statusStyle = "status-in-progress";
+					}
+					else if (item.Status == StaticDetails.QUEUE_COMPLETED)
+					{
+						statusStyle = "status-completed";
+					}
+
+					<div class="card-custom">
+						<div class="card-body-custom">
+							<h4 class="card-title" style="color: #1D3557"><strong>@item.TicketNo</strong></h4>
+							<div class="row">
+								<div class="col-8">
+									<h6 class="card-title mb-2 @statusStyle">
+										<strong>@item.Status</strong>
+									</h6>
+								</div>
+								<div class="col-4"><a href="#" class="btn btn-outline-info btn-sm">View</a></div>
+							</div>
+						</div>
+					</div>
+
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+@section Scripts {
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.12/signalr.min.js"></script>
+	<script src="~/js/manageQueue.js"></script>
+	@* <script>
+
+		var connection = new signalR.HubConnectionBuilder().withUrl("/queueHub").build();
+
+		connection.on("ReceiveQueueUpdate", function (activateSound) {
+			reloadQueueItems();
+		});
+
+		connection.start().catch(function (err) {
+			return console.error(err.toString());
+		});
+
+
+	</script> *@
+}

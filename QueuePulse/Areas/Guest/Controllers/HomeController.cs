@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using QueuePulse.DataAccess.Data;
+using QueuePulse.DataAccess.Services;
 using QueuePulse.Models;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 
 namespace QueuePulse.Areas.Guest.Controllers
 {
@@ -10,11 +12,13 @@ namespace QueuePulse.Areas.Guest.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
+        private readonly TextToSpeechService _textToSpeechService;
 
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
             _context = context;
+            _textToSpeechService = new TextToSpeechService();
         }
 
         public IActionResult Index()
@@ -34,6 +38,18 @@ namespace QueuePulse.Areas.Guest.Controllers
             ViewData["ConnectionStatus"] = isConnectionSuccessful? "Connection established successfully!": "Connection Failed.";
 
             return View();
+        }
+
+        // This will handle the form submission
+        [HttpPost]
+        public async Task<ActionResult> SpeakText(string ticketNo, string counterName)
+        {
+            if (!string.IsNullOrEmpty(ticketNo))
+            {
+                await   _textToSpeechService.ConvertTextToSpeech($"Now calling {ticketNo}, you may now approach the counter {counterName}");
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Privacy()

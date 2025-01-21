@@ -13,6 +13,18 @@
     }
 }
 
+<h2>Text-to-Speech Converter</h2>
+
+<form asp-action="SpeakText" method="post">
+    <label>Ticket Number:</label>
+    <input name="ticketNo" placeholder="Ticket No"/><br>
+    <label>Counter Name:</label>
+    <input name="counterName" placeholder="Counter Name" /><br>
+    <button type="submit">Speak</button>
+</form>
+
+
+
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <div class="@connectionStyle">

@@ -134,7 +134,7 @@
     ViewBag.Title = "Generate Ticket";
 }
 
-<form method="post" action="@Url.Action("AddQueue", "Ticket", new {area = "User"})">
+<form id="generateTicket" method="post" asp-area="User" asp-controller="Queue" asp-action="AddQueue">
     <div class="row d-flex flex-fill justify-content-center">
         <h3 class="row justify-content-center mt-4">Services Offered</h3>
         @foreach (var item in Model)
@@ -196,7 +196,10 @@
             icon: "success",
             title: "Your ticket has been created.",
             showConfirmButton: false,
-            timer: 1500
-        });
+            timer: 1500 // Alert will automatically close after 1500ms
+        }).then(() => {
+        // Submit the form after the SweetAlert is shown
+            document.getElementById('generateTicket').submit(); // Replace 'yourFormId' with the actual form ID
+        });;
     });
 </script>

@@ -165,6 +165,7 @@ namespace QueuePulse.Areas.Admin.Controllers
                     }
 
                     servicesFromDb.Name = servicesVM.QueueService.Name;
+                    servicesFromDb.Prefix = servicesVM.QueueService.Prefix;
                     servicesFromDb.Description = servicesVM.QueueService.Description;
                     servicesFromDb.Department_Id = servicesVM.QueueService.Department_Id;
                     servicesFromDb.UpdatedDate = DateTime.Now;

@@ -14,8 +14,8 @@ namespace QueuePulse.Models.Entities
         [MinLength(10, ErrorMessage = "Should have atleast 10 characters.")]
         [MaxLength(200, ErrorMessage = "Maximum of 200 characters only.")]
         public string Description { get; set; }
-        [DisplayName("Date Created")]
-        public DateTime CreatedDate { get; set; }
+		[DisplayName("Date Created")]
+		public DateTime CreatedDate { get; set; }
         [DisplayName("Date Updated")]
         public DateTime UpdatedDate { get; set; }
         [DisplayName("Created By")]

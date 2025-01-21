@@ -13,7 +13,7 @@ namespace QueuePulse.FluentAPIConfig
             builder.HasKey(d => d.Id);
             builder.Property(d => d.Name).IsRequired().HasMaxLength(50);
             builder.Property(d => d.Description).IsRequired().HasMaxLength(200);
-            builder.Property(d => d.Status).HasMaxLength(10).HasDefaultValue(StaticDetails.CONTENTSTATUS_ACTIVE);
+			builder.Property(d => d.Status).HasMaxLength(10).HasDefaultValue(StaticDetails.CONTENTSTATUS_ACTIVE);
 
             builder.HasData(
                 new Department
