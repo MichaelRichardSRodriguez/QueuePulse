@@ -292,6 +292,35 @@ namespace QueuePulse.Migrations
                         });
                 });
 
+            modelBuilder.Entity("QueuePulse.Models.Entities.DisplayWorkstation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CurrentQueue")
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)")
+                        .HasDefaultValue("Offline");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("DisplayWorkstations");
+                });
+
             modelBuilder.Entity("QueuePulse.Models.Entities.Profile", b =>
                 {
                     b.Property<int>("Id")
@@ -523,6 +552,17 @@ namespace QueuePulse.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("QueuePulse.Models.Entities.DisplayWorkstation", b =>
+                {
+                    b.HasOne("QueuePulse.Models.Entities.Profile", "Profile")
+                        .WithMany()
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
                 });
 
             modelBuilder.Entity("QueuePulse.Models.Entities.Profile", b =>

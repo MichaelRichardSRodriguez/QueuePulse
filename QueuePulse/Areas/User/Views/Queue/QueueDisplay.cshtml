@@ -1,0 +1,383 @@
+﻿@model IEnumerable<DisplayWorkstation>
+
+@{
+	var currentCallNumber = "....";
+	var currentTerminalNumber = ".....";
+}
+
+<style>
+	.queue-card {
+		border: 1px solid #ddd;
+		border-radius: 8px;
+		padding: 15px;
+		margin-bottom: 20px;
+		box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+	}
+
+		.queue-card:hover {
+			transform: translateY(-5px);
+			box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+		}
+
+	.queue-header {
+		font-size: 18px;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+
+	.queue-date {
+		font-size: 14px;
+		color: #555;
+		margin-bottom: 10px;
+	}
+
+	.queue-status {
+		font-size: 14px;
+		font-weight: bold;
+	}
+
+	/* Status color indicators */
+	.status-pending {
+		color: #FF885B; /* Yellow for pending */
+	}
+
+	.status-in-progress {
+		color: #1E90FF; /* Blue for in-progress */
+	}
+
+	.status-completed {
+		color: #117554; /* Green for completed */
+	}
+
+	.status-cancelled {
+		color: #e74c3c; /* Red for cancelled */
+	}
+
+	/* For better responsive grid layout */
+	.queue-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+		gap: 20px;
+	}
+
+	.terminal-container {
+		height: 500px; /* Set your fixed height here */
+		overflow-x: hidden; /* Adds vertical scrollbar if content exceeds the height */
+		padding: 2px; /* Optional, for better spacing */
+		/* border: 1px solid #ccc;  */ /* Optional, for border around the container */
+		/*background-color:  #f9f9f9;  */ /* Optional, background color */
+		overflow-y: hidden;
+	}
+
+		/* Style the scrollbar itself */
+		.terminal-container::-webkit-scrollbar {
+			width: 8px; /* Width of the vertical scrollbar */
+		}
+
+		/* Transparent scrollbar track */
+		.terminal-container::-webkit-scrollbar-track {
+			background-color: transparent; /* Transparent background for the scrollbar track */
+		}
+
+		/* Style the draggable scrollbar thumb */
+		.terminal-container::-webkit-scrollbar-thumb {
+			background-color: #888; /* Thumb color */
+			border-radius: 10px; /* Optional rounded corners for the thumb */
+		}
+
+			/* On hover, make the thumb darker */
+			.terminal-container::-webkit-scrollbar-thumb:hover {
+				background-color: #555;
+			}
+
+	.video-section {
+		flex: 1;
+		max-width: 100%; /* Adjust width of the video section */
+		margin-right: 10px;
+	}
+		/* Ensure the video is responsive */
+		.video-section video {
+			width: 100%;
+			height: auto;
+		}
+
+			.video-section video.circle {
+				border-radius: 10px; /* Circle shape */
+			}
+</style>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Terminal Queue System</title>
+</head>
+<body>
+
+	<div class="mt-2">
+
+		<!-- REVISED -->
+		<div class="row">
+			<div class="col-6">
+				<!-- Current Call Number Section -->
+				<div class="current-call-container">
+					<div class="row">
+						<div class="col">
+							<div>Ticket Number</div>
+							<div id="currentQueueDisplay" class="current-call-number">@currentCallNumber</div>
+						</div>
+						<div class="col">
+							<div>Please Proceed To</div>
+							<div id="currentWorkstationDisplay" class="current-call-number">@currentTerminalNumber</div>
+						</div>
+					</div>
+				</div>
+				<!-- Video Section -->
+				<div class="video-section">
+					<video controls autoplay loop class="circle">
+						<source src="~/video/Ads.mp4" type="video/mp4">
+						Your browser does not support the video tag.
+					</video>
+				</div>
+			</div>
+			<div class="col-6">
+				<div class="terminal-container">
+					<div id="queueCards" class="row row-cols-1 row-cols-md-5 g-2 mt-2">
+						@foreach (var item in Model)
+						{
+							<div class="col mb-4">
+								<div class="card-custom-display">
+									<div class="card-body-custom-display">
+										<h2 class="card-title" style="color: #1D3557"><strong>@item.Profile.Name</strong></h2>
+										<div class="row">
+											<div class="col-8">
+												<h1 class="card-title mb-2">
+													<strong>@item.CurrentQueue</strong>
+												</h1>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+
+				<!-- TESTING (TEXT TO SPEECH) -->
+				<form asp-action="SpeakText" method="post">
+					<label>Ticket Number:</label>
+					<input name="ticketNo" placeholder="Ticket No" /><br>
+					<label>Counter Name:</label>
+					<input name="counterName" placeholder="Counter Name" /><br>
+					<button type="submit">Speak</button>
+				</form>
+
+
+
+			</div>
+		</div>
+
+
+
+		@* 		<!-- Current Call Number Section -->
+		<div class="current-call-container">
+		<div class="row">
+		<div class="col">
+		<div>Ticket Number</div>
+		<div id="currentQueueDisplay" class="current-call-number">@currentCallNumber</div>
+		</div>
+		<div class="col">
+		<div>Please Proceed To</div>
+		<div id="currentWorkstationDisplay" class="current-call-number">@currentTerminalNumber</div>
+		</div>
+		</div>
+		</div> *@
+
+		<!-- Video Section -->
+		@* 		<div class="video-section">
+		<video controls autoplay loop class="circle">
+		<source src="~/video/Ads.mp4" type="video/mp4">
+		Your browser does not support the video tag.
+		</video>
+		</div> *@
+		@* 		<div class="terminal-container">
+		<div id="queueCards" class="row row-cols-1 row-cols-md-5 g-2 mt-2">
+		@foreach (var item in Model)
+		{
+		<div class="col mb-4">
+		<div class="card-custom-display">
+		<div class="card-body-custom-display">
+		<h2 class="card-title" style="color: #1D3557"><strong>@item.Profile.Name</strong></h2>
+		<div class="row">
+		<div class="col-8">
+		<h1 class="card-title mb-2">
+		<strong>@item.CurrentQueue</strong>
+		</h1>
+		</div>
+		</div>
+		</div>
+		</div>
+		</div>
+
+		}
+		</div>
+		</div> *@
+
+	</div>
+
+	<footer>
+		<!-- Marquee Ad Container -->
+		<div class="ad-container">
+			<div class="ad-content">
+				<h3>Special Offer - Get 20% Off on Your Next Purchase!</h3>
+				<p>Visit our store and enjoy discounts on all products. Limited time offer, so hurry!</p>
+			</div>
+		</div>
+	</footer>
+
+</body>
+</html>
+
+@section Scripts {
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.12/signalr.min.js"></script>
+
+	<script>
+		var connection = new signalR.HubConnectionBuilder().withUrl("/queueHub").build();
+
+		connection.on("ReceiveQueueUpdate", function (activateSound, currentQueue, currentWorkstation) {
+
+			updateQueueList(currentQueue, currentWorkstation); // Reload the latest queue items
+
+			if (activateSound) {
+				playAudio();
+				queueTextScaled();
+			}
+
+		});
+		connection.start().catch(function (err) {
+
+			return console.error(err.toString());
+		});
+
+
+		function playAudio() {
+			var audio = document.getElementById("myAudio");
+
+			if (audio.readyState >= 3) {
+				// Use the Promise approach to play the audio
+				var playPromise = audio.play();
+
+				if (playPromise !== undefined) {
+					playPromise.then(function () {
+						// Audio is playing successfully
+						console.log("Audio is playing");
+					}).catch(function (error) {
+						// Handle error (e.g., if the browser blocked the audio)
+						console.error("Audio playback failed: " + error);
+					});
+				}
+			} else {
+				// Handle audio not loaded
+				console.error("Audio not loaded yet!");
+			}
+		}
+
+		function queueTextScaled() {
+			// Get the text element
+			const textElement = document.querySelector('.current-call-number');
+			// Add the 'scaled' class to trigger the scaling effect
+			textElement.classList.add('scaled');
+
+			setTimeout(function () {
+				textElement.classList.remove('scaled');
+			}, 3000);  // Reset after 1 second (1000 milliseconds)
+		}
+
+		function updateQueueList(currentQueue, currentWorkstation) {
+			// Fetch the latest queue items via an AJAX request (or you could pass data from SignalR)
+			fetch('/User/Queue/GetCurrentQueueLists')  // Adjust URL as necessary
+				.then(response => response.json())  // Convert response to JSON
+				.then(queueItems => {
+					//********** THIS IS A TABLE FORMAT *******************/
+					// Get the tbody element to insert rows into
+					// const tableBody = document.getElementById('queueList');
+					// tableBody.innerHTML = ''; // Clear any existing rows (if any)
+
+					// // Force a reflow to ensure the DOM updates immediately before the new rows are added
+					// document.body.offsetHeight;  // Trigger a reflow to make sure styles are recalculated
+
+					// // Loop through the fetched queue items and create table rows
+					// //********** THIS IS A TABLE FORMAT *******************/
+					// queueItems.forEach(function (item) {
+					// 	const row = document.createElement('tr');
+					// 	row.classList.add('table-light');
+
+					// 	// Add table cells (td) for each property of the queue item
+					// 	row.innerHTML = `
+					// 															<td>${item.queueNo}</td>
+					// 															<td>${new Date(item.dateCreated).toLocaleString()}</td>
+					// 															<td>${item.status}</td>
+					// 														`;
+
+					// 	// Append the row to the table body
+					// 	tableBody.appendChild(row);
+
+
+					// });
+
+					//********** THIS IS A CARD FORMAT *******************/
+					// Get the container element for the queue cards
+					const queueCardsContainer = document.getElementById('queueCards');
+					queueCardsContainer.innerHTML = ''; // Clear any existing content
+
+					if (currentQueue != null && currentQueue != "") {
+						const currentQueueValue = document.getElementById('currentQueueDisplay');
+						const currentWorkstationValue = document.getElementById('currentWorkstationDisplay');
+
+						currentQueueValue.innerHTML = currentQueue;
+						currentWorkstationValue.innerHTML = currentWorkstation;
+					}
+
+
+					// Force a reflow to ensure the DOM updates immediately before the new items are added
+					document.body.offsetHeight;  // Trigger a reflow to make sure styles are recalculated
+
+					// Loop through the fetched queue items and create cards
+					queueItems.forEach(function (item) {
+
+						const cardCol = document.createElement('div');
+						cardCol.classList.add('col', 'mb-4');
+
+						// <h2 class="card-title" style="color: #1D3557"><strong>${item.profile.counterName}</strong></h2>
+
+						// Create the card structure with dynamic data
+						cardCol.innerHTML = `
+																							<div class="card-custom-display">
+																								<div class="card-body-custom-display">
+																									<h2 class="card-title" style="color: #1D3557"><strong>${item.profile.counterName}</strong></h2>
+																									<div class="row">
+																										<div class="col-8">
+																											<h1 class="card-title mb-2">
+																												<strong>${item.currentQueue}</strong>
+																											</h1>
+																										</div>
+																									</div>
+																								</div>
+																							</div>
+																						`;
+
+						// Append the card to the queue container
+						queueCardsContainer.appendChild(cardCol);
+					});
+
+					//********** THIS IS A TABLE FORMAT *******************/
+				})
+				.catch(error => {
+					console.error('Error fetching queue items:', error);
+				});
+		}
+
+	</script>
+}

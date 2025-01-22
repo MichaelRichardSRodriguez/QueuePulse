@@ -30,5 +30,5 @@ namespace QueuePulse.Models.Entities
         [ValidateNever]
         public Department Department { get; set; }
 
-    }
+	}
 }

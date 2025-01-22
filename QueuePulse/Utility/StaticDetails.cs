@@ -16,8 +16,14 @@
         public const string QUEUE_NEW = "New";
         public const string QUEUE_INPROGRESS = "In Progress";
         public const string QUEUE_COMPLETED = "Completed";
-        //public const string ROLE_ = "***";
+		//public const string ROLE_ = "***";
 
 
-    }
+
+		//For Display Workstations
+		public const string DISPLAY_ONLINE = "Online";
+		public const string DISPLAY_OFFLINE = "Offline";
+
+
+	}
 }

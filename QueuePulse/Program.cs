@@ -7,6 +7,7 @@ using QueuePulse.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using QueuePulse.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Queuing_System.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddControllersWithViews();
 //Add Dbcontext
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("QueuePulseConnection")));
 builder.Services.AddRazorPages(); //Service To Allow the use of Razor Pages then Add the Mapping of Razor pages below
+builder.Services.AddSignalR(); //Service To Use SignalR
 
 //This logs-in you automatically once successfully registered. IdentityRole is Added
 builder.Services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders(); //.AddDefaultIdentity<IdentityUser>" is the default value
@@ -58,9 +60,10 @@ app.UseRouting();
 app.UseAuthentication(); //To Check the Role of The User, Authentication First Before Authorization
 app.UseAuthorization();
 app.MapRazorPages(); //Map the Razor Pages
+app.MapHub<QueueHub>("/queueHub");
 app.MapControllerRoute(
     name: "default",
-    pattern: "{area=Guest}/{controller=Dashboard}/{action=Index}/{id?}");
+    pattern: "{area=Guest}/{controller=Home}/{action=Dashboard}/{id?}");
 
 app.Run();
 

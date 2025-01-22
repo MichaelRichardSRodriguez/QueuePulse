@@ -14,6 +14,7 @@ namespace QueuePulse.DataAccess.Data
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Profile> Profiles { get; set; }
+        public DbSet<DisplayWorkstation> DisplayWorkstations { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -29,6 +30,7 @@ namespace QueuePulse.DataAccess.Data
             modelBuilder.ApplyConfiguration(new QueueGroupConfig());
             modelBuilder.ApplyConfiguration(new TicketConfig());
             modelBuilder.ApplyConfiguration(new ProfileConfig());
+            modelBuilder.ApplyConfiguration(new DisplayWorkStationConfig());
         }
     }
 }
