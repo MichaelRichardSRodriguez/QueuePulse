@@ -166,13 +166,16 @@
 				</div>
 
 				<!-- TESTING (TEXT TO SPEECH) -->
-				<form asp-action="SpeakText" method="post">
-					<label>Ticket Number:</label>
-					<input name="ticketNo" placeholder="Ticket No" /><br>
-					<label>Counter Name:</label>
+				<div>
+					<label for="ticketNo">Ticket Number:</label>
+					<input id="ticketNo" name="ticketNo" placeholder="Ticket No" /><br>
+					</div>
+					<div>
+					<label for="counterName">Counter Name:</label>
 					<input name="counterName" placeholder="Counter Name" /><br>
-					<button type="submit">Speak</button>
-				</form>
+					<button id="counterName" type="button" onclick="callSpeakText()">Speak</button>
+					</div>
+
 
 
 
@@ -353,20 +356,19 @@
 						// <h2 class="card-title" style="color: #1D3557"><strong>${item.profile.counterName}</strong></h2>
 
 						// Create the card structure with dynamic data
-						cardCol.innerHTML = `
-																							<div class="card-custom-display">
-																								<div class="card-body-custom-display">
-																									<h2 class="card-title" style="color: #1D3557"><strong>${item.profile.counterName}</strong></h2>
-																									<div class="row">
-																										<div class="col-8">
-																											<h1 class="card-title mb-2">
-																												<strong>${item.currentQueue}</strong>
-																											</h1>
-																										</div>
-																									</div>
-																								</div>
-																							</div>
-																						`;
+						cardCol.innerHTML = `<div class="card-custom-display">
+											<div class="card-body-custom-display">
+											<h2 class="card-title" style="color: #1D3557"><strong>${item.profile.counterName}</strong></h2>
+												<div class="row">
+												<div class="col-8">
+												<h1 class="card-title mb-2">
+												<strong>${item.currentQueue}</strong>
+												</h1>
+												</div>
+												</div>
+												</div>
+												</div>
+											`;
 
 						// Append the card to the queue container
 						queueCardsContainer.appendChild(cardCol);
@@ -378,6 +380,43 @@
 					console.error('Error fetching queue items:', error);
 				});
 		}
+
+
+		function callSpeakText() {
+        // Get the values from your input fields
+        // var ticketNo = $('#ticketNo').val();
+        // var counterName = $('#counterName').val();
+
+		var ticketNo =  document.getElementById('ticketNo').value;
+			var counterName =  document.getElementById('counterName').value;
+
+
+        // Perform input validation
+        if (!ticketNo || !counterName) {
+            alert("Please enter both ticket number and counter name.");
+            return;
+        }
+
+        // AJAX call to the SpeakText action
+        $.ajax({
+            url: '@Url.Action("SpeakText", "YourControllerName")', // Replace 'YourControllerName' with the actual name of your controller
+            type: 'POST',
+            data: {
+                ticketNo: ticketNo,
+                counterName: counterName
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert("Text-to-speech request was successful!");
+                } else {
+                    alert("Error: " + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("An error occurred: " + error);
+            }
+        });
+    }
 
 	</script>
 }

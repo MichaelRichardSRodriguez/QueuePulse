@@ -16,18 +16,18 @@ namespace QueuePulse.Areas.User.Controllers
     public class QueueController : Controller
     {
         private readonly ApplicationDbContext _context;
-		private readonly IHubContext<QueueHub> _hubContext;
-		private readonly TextToSpeechService _textToSpeechService;
+        private readonly IHubContext<QueueHub> _hubContext;
+        private readonly TextToSpeechService _textToSpeechService;
 
-		public QueueController(ApplicationDbContext context, IHubContext<QueueHub> hubContext)
+        public QueueController(ApplicationDbContext context, IHubContext<QueueHub> hubContext)
         {
             _context = context;
             _hubContext = hubContext;
-			_textToSpeechService = new TextToSpeechService();
+            _textToSpeechService = new TextToSpeechService();
         }
         public IActionResult Index()
         {
-            var ticket =  _context.Tickets.ToList();
+            var ticket = _context.Tickets.ToList();
             return View(ticket);
         }
 
@@ -75,76 +75,82 @@ namespace QueuePulse.Areas.User.Controllers
         }
 
         public async Task<IActionResult> ManageQueue()
-		{
+        {
 
-			var ticketsVM = await _context.Tickets.ToListAsync();
+            var ticketsVM = await _context.Tickets.ToListAsync();
 
-			return View(ticketsVM);
-		}
+            return View(ticketsVM);
+        }
 
         public async Task<IActionResult> QueueDisplay()
         {
-			var workstations = await _context.Profiles
-					   .Where(profiles => !_context.DisplayWorkstations.AsNoTracking()
-					   .Any(dw => dw.ProfileId == profiles.Id))
-					   .ToListAsync();
+            var workstations = await _context.Profiles
+                       .Where(profiles => !_context.DisplayWorkstations.AsNoTracking()
+                       .Any(p => p.ProfileId == profiles.Id))
+                       .ToListAsync();
 
-			if (workstations != null)
-			{
-				var newDisplayWorkstation = workstations.Select(profile => new DisplayWorkstation
-				{
-					ProfileId = profile.Id,
-					Status = StaticDetails.DISPLAY_ONLINE,
-					CurrentQueue = "...."
-				}).ToList();
+            if (workstations != null)
+            {
+                var newDisplayWorkstation = workstations.Select(profile => new DisplayWorkstation
+                {
+                    ProfileId = profile.Id,
+                    Status = StaticDetails.DISPLAY_ONLINE,
+                    CurrentQueue = "...."
+                }).ToList();
 
-				await _context.DisplayWorkstations.AddRangeAsync(newDisplayWorkstation);
-				await _context.SaveChangesAsync();
+                await _context.DisplayWorkstations.AddRangeAsync(newDisplayWorkstation);
+                await _context.SaveChangesAsync();
 
-			}
+            }
 
-			var queueItems = await _context.DisplayWorkstations
-				.Include(p => p.Profile)
-				.Where(w => w.Status == StaticDetails.DISPLAY_ONLINE)
-				.OrderBy(p => p.Profile.Department.Name)
-				.ThenBy(p => p.Profile.Name)
-				.ToListAsync();
+            //var queueItems = await _context.DisplayWorkstations
+            //	.Include(p => p.Profile)
+            //	.Where(w => w.Status == StaticDetails.DISPLAY_ONLINE)
+            //	.OrderBy(p => p.Profile.Department.Name)
+            //	.ThenBy(p => p.Profile.Name)
+            //	.ToListAsync();
 
-			return View(queueItems);
-		}
+            var queueItems = await _context.DisplayWorkstations
+                            .Include(p => p.Profile)
+                            .Where(w => w.Status == StaticDetails.DISPLAY_ONLINE)
+                            .OrderBy(p => p.Profile.Name)
+                            .ToListAsync();
 
-		public async Task<IActionResult> GetCurrentQueueLists()
-		{
-			var queueItems = await _context.DisplayWorkstations
-				.Include(p => p.Profile)
-				.Where(w => w.Status == StaticDetails.DISPLAY_ONLINE)
-				.OrderBy(p => p.Profile.Department.Name)
-				.ThenBy(p => p.Profile.Name)
-				.ToListAsync();
+            return View(queueItems);
+        }
+
+        public async Task<IActionResult> GetCurrentQueueLists()
+        {
+            var queueItems = await _context.DisplayWorkstations
+                .Include(p => p.Profile)
+                .Where(w => w.Status == StaticDetails.DISPLAY_ONLINE)
+                .OrderBy(p => p.Profile.Department.Name)
+                .ThenBy(p => p.Profile.Name)
+                .ToListAsync();
 
 
-			//var queueItems = await _context.QueueItems
-			//				.Include(c => c.Category)
-			//				.Where(q => q.Status == StaticDetails.Status_Processing)
-			//				.GroupBy(q => q.ServiceId)
-			//				.Select(q => q.OrderByDescending(q => q.DateCreated).FirstOrDefault())
-			//				.ToListAsync();
+            //var queueItems = await _context.QueueItems
+            //				.Include(c => c.Category)
+            //				.Where(q => q.Status == StaticDetails.Status_Processing)
+            //				.GroupBy(q => q.ServiceId)
+            //				.Select(q => q.OrderByDescending(q => q.DateCreated).FirstOrDefault())
+            //				.ToListAsync();
 
-			return Json(queueItems);
+            return Json(queueItems);
 
-		}
+        }
 
-		// This will handle the form submission
-		[HttpPost]
-		public async Task<ActionResult> SpeakText(string ticketNo, string counterName)
-		{
-			if (!string.IsNullOrEmpty(ticketNo))
-			{
-				await _textToSpeechService.ConvertTextToSpeech($"Now calling {ticketNo}, you may now approach the counter {counterName}");
-			}
+        // This will handle the form submission
+        [HttpPost]
+        public async Task<ActionResult> SpeakText(string ticketNo, string counterName)
+        {
+            if (!string.IsNullOrEmpty(ticketNo))
+            {
+                await _textToSpeechService.ConvertTextToSpeech($"Now calling {ticketNo}, you may now approach the counter {counterName}");
+            }
 
-			//return RedirectToAction(nameof(Index));
-			return Json(new {success = true});
-		}
-	}
+            //return RedirectToAction(nameof(Index));
+            return Json(new { success = true });
+        }
+    }
 }

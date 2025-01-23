@@ -83,7 +83,8 @@ namespace QueuePulse.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Description", profile.DepartmentId);
+
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", profile.DepartmentId);
             return View(profile);
         }
 
@@ -103,7 +104,19 @@ namespace QueuePulse.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(profile);
+                    var profileFromDb = await _context.Profiles.FindAsync(id);
+
+                    if (profileFromDb == null)
+                    {
+                        return NotFound();
+                    }
+
+                    profileFromDb.UpdatedDate = DateTime.Now;
+                    profileFromDb.UpdatedBy = "MIKE";
+                    profileFromDb.Name = profile.Name;
+                    profileFromDb.DepartmentId = profile.DepartmentId;
+
+                    _context.Update(profileFromDb);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -119,7 +132,7 @@ namespace QueuePulse.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Description", profile.DepartmentId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", profile.DepartmentId);
             return View(profile);
         }
 
