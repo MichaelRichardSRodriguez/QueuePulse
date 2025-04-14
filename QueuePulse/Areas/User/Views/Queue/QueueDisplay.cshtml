@@ -6,6 +6,36 @@
 }
 
 <style>
+
+/* 	/* Set to full screen */
+	html, body {
+		height: 100%;
+		margin: 0;
+		overflow: hidden; /* Hide scrollbars */
+	}
+
+	#content {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-direction: row;
+	}
+
+	.mt-2 {
+		display: flex;
+		flex-direction: row;
+		width: 100%;
+		height: 100%;
+	}
+
+
+	.nav-menu {
+		display: none;
+	}
+
+	/**********************/ */
 	.queue-card {
 		border: 1px solid #ddd;
 		border-radius: 8px;
@@ -116,6 +146,7 @@
 </head>
 <body>
 
+	<div id="content">
 	<div class="mt-2">
 
 		<!-- REVISED -->
@@ -136,7 +167,7 @@
 				</div>
 				<!-- Video Section -->
 				<div class="video-section">
-					<video controls autoplay loop class="circle">
+					<video controls autoplay loop muted class="circle">
 						<source src="~/video/Ads.mp4" type="video/mp4">
 						Your browser does not support the video tag.
 					</video>
@@ -144,7 +175,7 @@
 			</div>
 			<div class="col-6">
 				<div class="terminal-container">
-					<div id="queueCards" class="row row-cols-1 row-cols-md-5 g-2 mt-2">
+					<div id="queueCards" class="row row-cols-1 row-cols-md-5 g-2">
 						@foreach (var item in Model)
 						{
 							<div class="col mb-4">
@@ -172,8 +203,8 @@
 					</div>
 					<div>
 					<label for="counterName">Counter Name:</label>
-					<input name="counterName" placeholder="Counter Name" /><br>
-					<button id="counterName" type="button" onclick="callSpeakText()">Speak</button>
+					<input id ="counterName" name="counterName" placeholder="Counter Name" /><br>
+					<button type="button" onclick="callSpeakText()">Speak</button>
 					</div>
 
 
@@ -227,6 +258,8 @@
 		}
 		</div>
 		</div> *@
+
+	</div>
 
 	</div>
 
@@ -387,8 +420,8 @@
         // var ticketNo = $('#ticketNo').val();
         // var counterName = $('#counterName').val();
 
-		var ticketNo =  document.getElementById('ticketNo').value;
-			var counterName =  document.getElementById('counterName').value;
+			var ticketNo = document.getElementById('ticketNo').value;
+			var counterName = document.getElementById('counterName').value;
 
 
         // Perform input validation
@@ -399,7 +432,7 @@
 
         // AJAX call to the SpeakText action
         $.ajax({
-            url: '@Url.Action("SpeakText", "YourControllerName")', // Replace 'YourControllerName' with the actual name of your controller
+            url: '@Url.Action("SpeakText", "Queue")', // Replace 'YourControllerName' with the actual name of your controller
             type: 'POST',
             data: {
                 ticketNo: ticketNo,
@@ -417,6 +450,24 @@
             }
         });
     }
+
+		function requestFullscreen() {
+			var element = document.documentElement;
+			if (element.requestFullscreen) {
+				element.requestFullscreen();
+			} else if (element.mozRequestFullScreen) { // Firefox
+				element.mozRequestFullScreen();
+			} else if (element.webkitRequestFullscreen) { // Chrome, Safari, Opera
+				element.webkitRequestFullscreen();
+			} else if (element.msRequestFullscreen) { // IE/Edge
+				element.msRequestFullscreen();
+			}
+		}
+
+		// window.onload = function () {
+		// 	requestFullscreen(); // Call on page load
+		// 	alert('Should be Full Screen')
+		// };
 
 	</script>
 }

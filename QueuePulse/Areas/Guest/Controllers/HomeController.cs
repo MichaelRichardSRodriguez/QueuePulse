@@ -18,11 +18,17 @@ namespace QueuePulse.Areas.Guest.Controllers
         private readonly ApplicationDbContext _context;
         private readonly TextToSpeechService _textToSpeechService;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
+		public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
             _context = context;
             _textToSpeechService = new TextToSpeechService();
+        }
+
+
+        public IActionResult FullScreenView()
+        {
+            return View();
         }
 
         public IActionResult Index()
