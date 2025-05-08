@@ -57,7 +57,7 @@ function NextQueueButtonClick() {
 function getQueueItemName(currentWorkstation) {
 
     document.getElementById('queueItemNameLabel').textContent = '';
-    var url = '/Queue/GetNextQueueItem?currentWorkstation=' + encodeURIComponent(currentWorkstation);    /*'@Url.Action("GetNextQueueItem", "Queue")';*/
+    var url = '/User/Queue/GetNextQueueItem?currentWorkstation=' + encodeURIComponent(currentWorkstation);    /*'@Url.Action("GetNextQueueItem", "Queue")';*/
 
     // Perform the fetch call to the GetQueueItemName action in the controller
     fetch(url) // The controller action URL

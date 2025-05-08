@@ -152,5 +152,40 @@ namespace QueuePulse.Areas.User.Controllers
             //return RedirectToAction(nameof(Index));
             return Json(new { success = true });
         }
+
+        // GET: /Queue/NextQueueItem
+        [HttpGet]
+        public async Task<IActionResult> GetNextQueueItem(string currentWorkstation)
+        {
+            var queueItem = await _context.Tickets
+                                           .Where(q => q.Status == StaticDetails.QUEUE_NEW)
+                                           .OrderBy(q => q.Id) // or any other field you want to use to determine the "first" record
+                                           .FirstOrDefaultAsync();
+
+            if (queueItem != null)
+            {
+                //Console.WriteLine($"QueueItem ID: {queueItem.Id}, Queue: {queueItem.Name}, Status: {queueItem.Status}, DateCreated: {queueItem.DateCreated}");
+
+                queueItem.Status = StaticDetails.QUEUE_INPROGRESS;
+                _context.Tickets.Update(queueItem);
+
+                var workstation = await _context.DisplayWorkstations.Include(p => p.Profile).FirstOrDefaultAsync(p => p.Profile.Name == currentWorkstation);
+                if (workstation != null)
+                {
+                    workstation.CurrentQueue = queueItem.TicketNo;
+                    _context.DisplayWorkstations.Update(workstation);
+                }
+
+                await _context.SaveChangesAsync();
+
+                // Notify clients about the new queue item
+                await _hubContext.Clients.All.SendAsync("ReceiveQueueUpdate", true, queueItem.TicketNo, currentWorkstation);
+
+                return Json(new { success = true, id = queueItem.Id, queueNo = queueItem.TicketNo });
+            }
+
+            return Json(new { success = false, message = "Queue not found" });
+
+        }
     }
 }
